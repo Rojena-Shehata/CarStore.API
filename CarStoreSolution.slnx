@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/ApplicationCoreLayer/">
+    <Project Path="CarStore.Domain/CarStore.Domain.csproj" />
+    <Project Path="CarStore.Services/CarStore.Services.csproj" />
+    <Project Path="CarStore.ServicesAbstraction/CarStore.ServicesAbstraction.csproj" />
+  </Folder>
+  <Folder Name="/InfrastructureLayer/">
+    <Project Path="CarStore.persistence/CarStore.persistence.csproj" />
+  </Folder>
+  <Folder Name="/PresentationLayer/">
+    <Project Path="CarStore.Presentation/CarStore.Presentation.csproj" />
+    <Project Path="CarStore.Web/CarStore.Web.csproj" />
+  </Folder>
+  <Project Path="CarStore.Sharede/CarStore.Shared.csproj" />
+</Solution>
