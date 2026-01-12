@@ -1,0 +1,14 @@
+{
+  "workspace": {
+    "id": "f62f27b7-0d7d-49b3-82ea-e02eaa551c4f"
+  },
+  "entities": {
+    "collections": [],
+    "environments": [],
+    "specs": [
+      "..\\CarStore.Web\\obj\\Debug\\net8.0\\EndpointInfo\\CarStore.Web.json"
+    ],
+    "flows": [],
+    "globals": []
+  }
+}
