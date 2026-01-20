@@ -25,6 +25,9 @@ namespace CarStore.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseMiddleware<CarStore.Domain.ExceptionHandling.ExceptionMiddleware>();
+
             app.UseAuthorization();
 
 
