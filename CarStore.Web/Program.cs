@@ -1,3 +1,4 @@
+using CarStore.persistence.Extensions;
 
 namespace CarStore.Web
 {
@@ -14,6 +15,8 @@ namespace CarStore.Web
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,6 +28,9 @@ namespace CarStore.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseMiddleware<CarStore.Domain.ExceptionHandling.ExceptionMiddleware>();
+
             app.UseAuthorization();
 
 
