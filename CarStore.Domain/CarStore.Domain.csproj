@@ -6,14 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="Entities\" />
-  </ItemGroup>
+
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.23" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <Folder Include="Entities\IdentityModule\" />
   </ItemGroup>
 
 </Project>
