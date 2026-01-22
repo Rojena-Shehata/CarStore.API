@@ -1,8 +1,8 @@
 using CarStore.Domain.Contracts;
+using CarStore.Domain.ExceptionHandling;
 using CarStore.persistence.Extensions;
 using CarStore.persistence.IdentityData.Data.DataSeed;
 using CarStore.Web.Extentions;
-using System.Threading.Tasks;
 
 namespace CarStore.Web
 {
@@ -36,7 +36,7 @@ namespace CarStore.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseMiddleware<CarStore.Domain.ExceptionHandling.ExceptionMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthorization();
 
