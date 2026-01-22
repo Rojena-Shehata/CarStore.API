@@ -1,10 +1,14 @@
+using CarStore.Domain.Contracts;
 using CarStore.persistence.Extensions;
+using CarStore.persistence.IdentityData.Data.DataSeed;
+using CarStore.Web.Extentions;
+using System.Threading.Tasks;
 
 namespace CarStore.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +20,12 @@ namespace CarStore.Web
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
 
             var app = builder.Build();
 
+            await app.MigrateIdentityDataAsync();
+            await app.SeedIdentityDataAsync();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

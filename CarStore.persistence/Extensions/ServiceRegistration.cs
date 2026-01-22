@@ -12,7 +12,7 @@ namespace CarStore.persistence.Extensions
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<IdentityAppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
+                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
