@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="IdentityData\Data\Configurations\" />
-    <Folder Include="IdentityData\Data\DataSeed\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 
@@ -28,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CarStore.Services\CarStore.Services.csproj" />
+    <ProjectReference Include="..\CarStore.Sharede\CarStore.Shared.csproj" />
   </ItemGroup>
 
 </Project>
