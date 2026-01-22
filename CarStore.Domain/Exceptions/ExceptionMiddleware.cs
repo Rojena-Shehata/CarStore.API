@@ -1,19 +1,26 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CarStore.Domain.Exceptions;
-using Microsoft.AspNetCore.Http;
-using static CarStore.Domain.Exceptions.CustomExceptions;
 
 namespace CarStore.Domain.ExceptionHandling
 {
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly IHostEnvironment _env;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(
+            RequestDelegate next,
+            ILogger<ExceptionMiddleware> logger,
+            IHostEnvironment env)
         {
             _next = next;
+            _logger = logger;
+            _env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -24,6 +31,7 @@ namespace CarStore.Domain.ExceptionHandling
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unhandled exception");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -31,34 +39,18 @@ namespace CarStore.Domain.ExceptionHandling
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            HttpStatusCode status;
-            object? errors = null;
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            switch (exception)
-            {
-                case NotFoundException:
-                    status = HttpStatusCode.NotFound;
-                    break;
-                case BadRequestException:
-                    status = HttpStatusCode.BadRequest;
-                    break;
-                case ValidationException ve:
-                    status = HttpStatusCode.BadRequest;
-                    errors = ve.Errors;
-                    break;
-                case UnauthorizedException:
-                    status = HttpStatusCode.Unauthorized;
-                    break;
-                default:
-                    status = HttpStatusCode.InternalServerError;
-                    break;
-            }
+            var detail = _env.IsDevelopment()
+                ? exception.Message
+                : "An unexpected error occurred";
 
-            context.Response.StatusCode = (int)status;
-            var response = new ExceptionResponse
+            var response = new
             {
-                Message = exception.Message,
-                Errors = errors
+                success = false,
+                status = 500,
+                title = "Internal Server Error",
+                detail = detail
             };
 
             var json = JsonSerializer.Serialize(response);
