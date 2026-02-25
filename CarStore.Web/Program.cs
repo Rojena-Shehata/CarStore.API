@@ -25,6 +25,7 @@ namespace CarStore.Web
             var app = builder.Build();
 
             await app.MigrateIdentityDataAsync();
+            await app.MigrateDataAsync();
             await app.SeedIdentityDataAsync();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
