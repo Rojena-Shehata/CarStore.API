@@ -41,5 +41,15 @@ namespace CarStore.persistence.Repositories
         {
             _dbSet.Update(entity);
         }
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification)
+        {
+           return await _dbSet.GetQuery<TEntity,TKey>(specification).ToListAsync();
+        }
+
+        public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity> specification)
+        {
+            return await _dbSet.GetQuery<TEntity, TKey>(specification).FirstOrDefaultAsync();
+        }
     }
 }

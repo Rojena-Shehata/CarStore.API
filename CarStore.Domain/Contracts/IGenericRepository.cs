@@ -10,7 +10,9 @@ namespace CarStore.Domain.Contracts
     public interface IGenericRepository<TEntity,TKey>where TEntity:BaseEntity<TKey>
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification);
         Task<TEntity?> GetByIdAsync(TKey Id);
+        Task<TEntity?> GetByIdAsync(ISpecification<TEntity> specification);
         void Add(TEntity entity);
         void Delete(TEntity entity);
         void Update(TEntity entity);
