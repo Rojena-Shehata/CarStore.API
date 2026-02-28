@@ -1,4 +1,5 @@
 ﻿using CarStore.Domain.Entities;
+using CarStore.persistence.Data.DbContexts;
 using CarStore.persistence.IdentityData.Data.DbContexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,13 @@ namespace CarStore.persistence.Extensions
     {
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            //ApplicationDb
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            //IdentityDb
             services.AddDbContext<IdentityAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
 
