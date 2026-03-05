@@ -49,6 +49,10 @@ namespace CarStore.Domain.ExceptionHandling
                 case UnauthorizedException:
                     status = HttpStatusCode.Unauthorized;
                     break;
+                case EmailSendingException ese:
+                    status = HttpStatusCode.InternalServerError;
+                    errors = ese.Message;
+                    break;
                 default:
                     status = HttpStatusCode.InternalServerError;
                     break;

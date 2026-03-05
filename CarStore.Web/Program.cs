@@ -1,4 +1,5 @@
 using CarStore.persistence.Extensions;
+using CarStore.Services.Extensions;
 
 namespace CarStore.Web
 {
@@ -16,6 +17,7 @@ namespace CarStore.Web
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddApplicationServices(builder.Configuration);
 
             var app = builder.Build();
 
@@ -31,6 +33,7 @@ namespace CarStore.Web
 
             app.UseMiddleware<CarStore.Domain.ExceptionHandling.ExceptionMiddleware>();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

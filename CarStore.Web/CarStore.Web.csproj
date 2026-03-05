@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CarStore.persistence\CarStore.persistence.csproj" />
     <ProjectReference Include="..\CarStore.Presentation\CarStore.Presentation.csproj" />
+    <ProjectReference Include="..\CarStore.Services\CarStore.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

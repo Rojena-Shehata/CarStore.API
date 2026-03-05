@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarStore.Domain.Exceptions
 {
-    internal class CustomExceptions
+    public class CustomExceptions
     {
         public class NotFoundException : Exception
         {
@@ -26,6 +26,11 @@ namespace CarStore.Domain.Exceptions
         public class InternalServerException : Exception
         {
             public InternalServerException(string message) : base(message) { }
+        }
+
+        public class EmailSendingException : Exception
+        {
+            public EmailSendingException(string message) : base(message) { }
         }
     }
 }

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarStore.Domain\CarStore.Domain.csproj" />
     <ProjectReference Include="..\CarStore.Sharede\CarStore.Shared.csproj" />
   </ItemGroup>
 
