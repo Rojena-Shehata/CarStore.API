@@ -37,5 +37,12 @@ namespace CarStore.Web.Extentions
 
             return app;
         }
+
+        public static async Task SeedDataAsync(this WebApplication app)
+        {
+            var scope= app.Services.CreateScope();
+            var dataInitializerService = scope.ServiceProvider.GetRequiredKeyedService<IDataInitializer>("NotIdentity");
+            await dataInitializerService.InitializeAsync();
+        }
     }
 }

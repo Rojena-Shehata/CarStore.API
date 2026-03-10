@@ -1,5 +1,6 @@
 using CarStore.Domain.Contracts;
 using CarStore.Domain.ExceptionHandling;
+using CarStore.persistence.Data.DataSeed;
 using CarStore.persistence.Extensions;
 using CarStore.persistence.IdentityData.Data.DataSeed;
 using CarStore.Web.Extentions;
@@ -21,12 +22,14 @@ namespace CarStore.Web
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
+            builder.Services.AddKeyedScoped<IDataInitializer, DataInitializer>("NotIdentity");
 
             var app = builder.Build();
 
             await app.MigrateIdentityDataAsync();
             await app.MigrateDataAsync();
             await app.SeedIdentityDataAsync();
+            await app.SeedDataAsync();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
