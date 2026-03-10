@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CarStore.Domain.Entities.CarModule;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace CarStore.persistence.Data.DbContexts
@@ -14,6 +15,10 @@ namespace CarStore.persistence.Data.DbContexts
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+        public DbSet<Car> Cars { get; set; }
+        public DbSet<CarColor> Colors { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
     }
 }
