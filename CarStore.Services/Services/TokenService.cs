@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using CarStore.Domain.Entities.IdentityModule;
+using CarStore.Domain.Contracts;
 
 namespace CarStore.Services.Services
 {
     public class TokenService(
         UserManager<ApplicationUser> _userManager,
-        IOptions<JwtSettings> _options) : ITokenService
+        IOptions<JwtSettings> _options,
+        IUnitOfWork _unitOfWork) : ITokenService
     {
         public async Task<string> CreateAccessTokenAsync(ApplicationUser user)
         {
@@ -59,8 +61,8 @@ namespace CarStore.Services.Services
                 ExpiresOn = DateTime.UtcNow.AddDays(_options.Value.RefreshTokenExpirationDays)
             };
 
-            //await _unitOfWork.Repository.AddAsync(refreshToken);
-            //await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.GetRepository<RefreshToken, int>().Add(refreshToken);
+            await _unitOfWork.SaveChangesAsync();
 
             return refreshToken.Token;
         }

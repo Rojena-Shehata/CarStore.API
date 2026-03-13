@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using CarStore.Domain.Entities.IdentityModule;
+using CarStore.Domain.Contracts;
+using CarStore.Services.Specifications;
 
 namespace CarStore.Services.Services
 {
@@ -24,8 +26,8 @@ namespace CarStore.Services.Services
         ITokenService _tokenService,
         IOptions<JwtSettings> _jwtOptions,
         IOptions<GoogleAuthSettings> _googleOptions,
-        IServiceProvider _serviceProvider,
-        IHttpContextAccessor _httpContextAccessor) : IAuthService
+        IHttpContextAccessor _httpContextAccessor,
+        IUnitOfWork _unitOfWork) : IAuthService
     {
 
 
@@ -60,8 +62,7 @@ namespace CarStore.Services.Services
             if (!identityResult.Succeeded)
                 return Error.Validation(description: string.Join(", ", identityResult.Errors.Select(e => e.Description).ToList()));
 
-            // if create user success, handle Role later.
-            // await _userManager.AddToRoleAsync(user, "User");
+            // Handle role later
 
             return await generateAuthResponseAsync(user);
         }
@@ -190,32 +191,47 @@ namespace CarStore.Services.Services
 
         public async Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
         {
-            // The refresh-token flow is planned but not implemented yet.
-            // Returning a failure Result<AuthResponseDto> (consistent with other methods returning Error.*).
-            return Error.Failure(description: "Refresh token flow not implemented yet.");
+            RefreshTokenSpecification refreshTokenSpecification = new RefreshTokenSpecification(refreshToken);
+            RefreshToken? existingRefreshToken = await _unitOfWork.GetRepository<RefreshToken, int>()
+                .GetByIdAsync(refreshTokenSpecification);
+
+            if (existingRefreshToken == null)
+                return Error.Validation(description: "Invalid Refresh Token.");
+            if (existingRefreshToken.RevokedOn != null)
+                return Error.Validation(description: "Refresh Token has been revoked.");
+            if (existingRefreshToken.ExpiresOn <= DateTime.UtcNow)
+                return Error.Validation(description: "Refresh Token has expired.");
+
+            ApplicationUser? user = await _userManager.FindByIdAsync(existingRefreshToken.UserId);
+            if (user == null)
+                return Error.NotFound(description: "User not found.");
+
+            existingRefreshToken.RevokedOn = DateTime.UtcNow;
+            _unitOfWork.GetRepository<RefreshToken, int>().Update(existingRefreshToken);
+            await _unitOfWork.SaveChangesAsync();
+
+            return await generateAuthResponseAsync(user);
         }
 
         public async Task<Result> RevokeRefreshTokenAsync(string refreshToken)
         {
+            RefreshTokenSpecification refreshTokenSpecification = new RefreshTokenSpecification(refreshToken);
+            RefreshToken? existingRefreshToken = await _unitOfWork.GetRepository<RefreshToken, int>()
+                .GetByIdAsync(refreshTokenSpecification);
 
-            string userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (existingRefreshToken == null)
+                return Error.Validation(description: "Invalid Refresh Token.");
+            if (existingRefreshToken.RevokedOn != null)
+                return Error.Validation(description: "Refresh Token has been revoked.");
+            if (existingRefreshToken.ExpiresOn <= DateTime.UtcNow)
+                return Error.Validation(description: "Refresh Token has expired.");
 
-            // will be implemented later
-            //var existingRefreshToken = //await _unitOfWork.Repository.GetAsync(
-            //    r => r.Token == refreshToken && r.UserId == userId);
+            if (existingRefreshToken.UserId != (_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                return Error.Unauthorized();
 
-            //if (existingRefreshToken == null)
-            //    return Error.NotFound(description: "Invalid Refresh Token.");
-
-            //if (existingRefreshToken.RevokedOn != null)
-            //    return Error.Validation(description: "Refresh Token is already revoked.");
-
-            //if (existingRefreshToken.ExpiresOn <= DateTime.UtcNow)
-            //    return Error.Validation(description: "Refresh Token has expired.");
-
-            //existingRefreshToken.RevokedOn = DateTime.UtcNow;
-            //await _unitOfWork.Repository.Update(existingRefreshToken);
-            //await _unitOfWork.SaveChangesAsync();
+            existingRefreshToken.RevokedOn = DateTime.UtcNow;
+            _unitOfWork.GetRepository<RefreshToken, int>().Update(existingRefreshToken);
+            await _unitOfWork.SaveChangesAsync();
 
             return Result.Ok();
         }
@@ -240,32 +256,15 @@ namespace CarStore.Services.Services
             }
         }
 
-        private async Task<AuthResponseDto> generateAuthResponseAsync(ApplicationUser user)
-        {
-            var accessToken = await _tokenService.CreateAccessTokenAsync(user);
-            var refreshTokenString = await _tokenService.CreateRefreshTokenAsync(user.Id);
-
-            var refreshToken = new RefreshToken
-            {
-                UserId = user.Id,
-                Token = refreshTokenString,
-                ExpiresOn = DateTime.UtcNow.AddDays(_jwtOptions.Value.RefreshTokenExpirationDays)
-            };
-
-            dynamic dbContext = _serviceProvider.GetRequiredService(Type.GetType("CarStore.persistence.IdentityData.Data.DbContexts.IdentityAppDbContext, CarStore.persistence")!);
-            DbContext efContext = (DbContext)dbContext;
-            await efContext.Set<RefreshToken>().AddAsync(refreshToken);
-            await efContext.SaveChangesAsync();
-
-            return new AuthResponseDto
+        private async Task<AuthResponseDto> generateAuthResponseAsync(ApplicationUser user) =>
+             new AuthResponseDto
             (
                 user.FullName,
                 user.Email!,
-                accessToken,
-                refreshTokenString,
+                await _tokenService.CreateAccessTokenAsync(user),
+                await _tokenService.CreateRefreshTokenAsync(user.Id),
                 DateTime.UtcNow.AddMinutes(_jwtOptions.Value.AccessTokenExpirationMinutes)
             );
-        }
 
         //private string emailVerificationHtmlBody(string emailVerificationLink) =>
         //   $@"

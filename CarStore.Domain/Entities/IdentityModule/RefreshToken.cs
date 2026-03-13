@@ -1,8 +1,7 @@
 ﻿namespace CarStore.Domain.Entities.IdentityModule
 {
-    public class RefreshToken
+    public class RefreshToken : BaseEntity<int>
     {
-        public int Id { get; set; }
         public string Token { get; set; } = string.Empty;
         public DateTime ExpiresOn { get; set; }
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
