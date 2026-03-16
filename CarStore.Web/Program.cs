@@ -1,14 +1,10 @@
-using CarStore.Domain.Contracts;
-using CarStore.Domain.ExceptionHandling;
 using CarStore.persistence.Extensions;
-using CarStore.persistence.IdentityData.Data.DataSeed;
-using CarStore.Web.Extentions;
 
 namespace CarStore.Web
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -20,13 +16,9 @@ namespace CarStore.Web
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
-            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
 
             var app = builder.Build();
 
-            await app.MigrateIdentityDataAsync();
-            await app.MigrateDataAsync();
-            await app.SeedIdentityDataAsync();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -37,7 +29,7 @@ namespace CarStore.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<CarStore.Domain.ExceptionHandling.ExceptionMiddleware>();
 
             app.UseAuthorization();
 

@@ -7,10 +7,6 @@ namespace CarStore.persistence.IdentityData.Data.DbContexts
 {
     public class IdentityAppDbContext : IdentityDbContext<ApplicationUser>
     {
-        public IdentityAppDbContext()
-        {
-            
-        }
         public IdentityAppDbContext(DbContextOptions<IdentityAppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
