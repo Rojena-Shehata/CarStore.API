@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace CarStore.Services.Specifications
 {
-    public abstract class BaseSpecification<T> : ISpecification<T>
+    public abstract class BaseSpecification<T>:ISpecification<T>
     {
         protected BaseSpecification(Expression<Func<T, bool>>? criteria)
         {
             Criteria = criteria;
         }
-
+       
 
         public Expression<Func<T, bool>>? Criteria { get; private set; }
 
@@ -32,7 +32,6 @@ namespace CarStore.Services.Specifications
 
         /////Methods
         //Apply Pagination
-        protected void ApplyPagination(int pageIndex, int pageSize)
         {
             IsPaginated = true;
             Take = pageSize;
@@ -46,14 +45,13 @@ namespace CarStore.Services.Specifications
         //orderBy
         protected void AddOrderBy(Expression<Func<T, object>> orederByExp)
         {
-            OrderByExpression = orederByExp;
         }
-
+        
         protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescExp)
         {
             OrderByDescendingExpression = orderByDescExp;
         }
-
+        
         //ApplyNoTracking
         protected void ApplyNoTracking()
         {
