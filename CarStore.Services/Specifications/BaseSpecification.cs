@@ -32,6 +32,7 @@ namespace CarStore.Services.Specifications
 
         /////Methods
         //Apply Pagination
+        protected void ApplyPagination(int pageIndex, int pageSize)
         {
             IsPaginated = true;
             Take = pageSize;

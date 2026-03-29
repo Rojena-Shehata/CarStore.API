@@ -3,7 +3,7 @@ using MailKit.Net.Smtp;
 using CarStore.Shared.Settings;
 using CarStore.ServicesAbstraction;
 using Microsoft.Extensions.Options;
-using static CarStore.Domain.Exceptions.CustomExceptions;
+using CarStore.Shared.CommonResult;
 
 namespace CarStore.Services.Services
 {
@@ -30,7 +30,8 @@ namespace CarStore.Services.Services
             }
             catch (Exception ex)
             {
-                throw new EmailSendingException($"Failed to send email:{ex.Message}");
+                //Edit...............
+               // throw new EmailSendingException($"Failed to send email:{ex.Message}");
             }
             finally
             {
