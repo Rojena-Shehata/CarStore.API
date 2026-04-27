@@ -13,6 +13,7 @@ namespace CarStore.Domain.Contracts
         Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification);
         Task<TEntity?> GetByIdAsync(TKey Id);
         Task<TEntity?> GetByIdAsync(ISpecification<TEntity> specification);
+        Task<int> CountAsync(ISpecification<TEntity> specification);
         void Add(TEntity entity);
         void Delete(TEntity entity);
         void Update(TEntity entity);
