@@ -1,6 +1,8 @@
-﻿using CarStore.Domain.Entities;
+﻿using CarStore.Domain.Contracts;
+using CarStore.Domain.Entities;
 using CarStore.persistence.Data.DbContexts;
 using CarStore.persistence.IdentityData.Data.DbContexts;
+using CarStore.persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +14,8 @@ namespace CarStore.persistence.Extensions
     {
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             //ApplicationDb
             services.AddDbContext<ApplicationDbContext>(options =>
             {

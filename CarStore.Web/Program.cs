@@ -3,6 +3,7 @@ using CarStore.Domain.ExceptionHandling;
 using CarStore.persistence.Data.DataSeed;
 using CarStore.persistence.Extensions;
 using CarStore.persistence.IdentityData.Data.DataSeed;
+using CarStore.Services;
 using CarStore.Web.Extentions;
 
 namespace CarStore.Web
@@ -21,6 +22,7 @@ namespace CarStore.Web
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddApplicationServices();
             builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
             builder.Services.AddKeyedScoped<IDataInitializer, DataInitializer>("NotIdentity");
 

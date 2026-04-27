@@ -10,6 +10,10 @@ namespace CarStore.Domain.Entities.CarModule
     public class Car:BaseEntity<int>
     {
         public string Name { get; set; } = default!;
+        public decimal? SalePrice { get; set; }
+
+        public decimal? DailyRentPrice { get; set; }//per day
+        public CarMode CarMode { get; set; }//sale or rent
         public string? Description { get; set; }= default!;
         public int? Year { get; set; }
         public int SeatsNumber { get; set; }
