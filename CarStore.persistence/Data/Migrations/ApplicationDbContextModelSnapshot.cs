@@ -37,7 +37,7 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
@@ -51,11 +51,17 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CarMode")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("DailyRentPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -71,6 +77,9 @@ namespace CarStore.persistence.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("SalePrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SeatsNumber")
                         .HasColumnType("int");
@@ -89,7 +98,7 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasIndex("ColorId");
 
-                    b.ToTable("Cars", null, t =>
+                    b.ToTable("Cars", t =>
                         {
                             t.HasCheckConstraint("CK_Car_Year", "[Year]>=1885 And [Year]<=2026");
                         });
@@ -115,7 +124,7 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Colors", (string)null);
+                    b.ToTable("Colors");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Category", b =>
@@ -133,7 +142,7 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
@@ -156,7 +165,7 @@ namespace CarStore.persistence.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("CarStore.Domain.Entities.CarModule.Car.Engine#CarStore.Domain.Entities.CarModule.Engine", "Engine", b1 =>
+                    b.OwnsOne("CarStore.Domain.Entities.CarModule.Engine", "Engine", b1 =>
                         {
                             b1.Property<int>("CarId")
                                 .HasColumnType("int");
@@ -169,7 +178,7 @@ namespace CarStore.persistence.Data.Migrations
 
                             b1.HasKey("CarId");
 
-                            b1.ToTable("Cars", (string)null);
+                            b1.ToTable("Cars");
 
                             b1.WithOwner()
                                 .HasForeignKey("CarId");
