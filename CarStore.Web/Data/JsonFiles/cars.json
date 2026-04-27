@@ -1,0 +1,59 @@
+[
+  {
+    "name": "Toyota Corolla 2022",
+    "salePrice": 550000,
+    "dailyRentPrice": null,
+    "carMode": 1,
+    "description": "Economic and suitable for daily use",
+    "year": 2022,
+    "seatsNumber": 4,
+    "transmissionType": 1,
+    "fuelType": 1,
+    "drivetrain": 1,
+    "engine": {
+      "capacity": 1600,
+      "cylindersNumber": 4
+    },
+    "colorId": 1,
+    "brandId": 1,
+    "categoryId": 1
+  },
+  {
+    "name": "Hyundai Elantra 2021",
+    "salePrice": null,
+    "dailyRentPrice": 800,
+    "carMode": 2,
+    "description": "Comfortable and fuel efficient",
+    "year": 2021,
+    "seatsNumber": 5,
+    "transmissionType": 1,
+    "fuelType": 1,
+    "drivetrain": 1,
+    "engine": {
+      "capacity": 1600,
+      "cylindersNumber": 4
+    },
+    "colorId": 2,
+    "brandId": 2,
+    "categoryId": 1
+  },
+  {
+    "name": "BMW X5 2023",
+    "salePrice": 2500000,
+    "dailyRentPrice": null,
+    "carMode": 1,
+    "description": "Luxury SUV with high performance",
+    "year": 2023,
+    "seatsNumber": 5,
+    "transmissionType": 1,
+    "fuelType": 2,
+    "drivetrain": 4,
+    "engine": {
+      "capacity": 3000,
+      "cylindersNumber": 6
+    },
+    "colorId": 3,
+    "brandId": 3,
+    "categoryId": 2
+  }
+]

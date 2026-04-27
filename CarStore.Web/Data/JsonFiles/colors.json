@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Black",
+    "hexCode": "#000000"
+  },
+  {
+    "name": "White",
+    "hexCode": "#FFFFFF"
+  },
+  {
+    "name": "Silver",
+    "hexCode": "#C0C0C0"
+  },
+  {
+    "name": "Gray",
+    "hexCode": "#808080"
+  },
+  {
+    "name": "Red",
+    "hexCode": "#FF0000"
+  },
+  {
+    "name": "Blue",
+    "hexCode": "#0000FF"
+  },
+  {
+    "name": "Green",
+    "hexCode": "#008000"
+  },
+  {
+    "name": "Yellow",
+    "hexCode": "#FFFF00"
+  },
+  {
+    "name": "Orange",
+    "hexCode": "#FFA500"
+  },
+  {
+    "name": "Brown",
+    "hexCode": "#8B4513"
+  }
+]
