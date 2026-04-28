@@ -5,6 +5,9 @@ using CarStore.persistence.Extensions;
 using CarStore.persistence.IdentityData.Data.DataSeed;
 using CarStore.Services;
 using CarStore.Web.Extentions;
+using Mapster;
+using MapsterMapper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CarStore.Web
 {
@@ -17,6 +20,10 @@ namespace CarStore.Web
             // Add services to the container.
 
             builder.Services.AddControllers();
+            //mapster
+            builder.Services.AddMapster();
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -25,6 +32,7 @@ namespace CarStore.Web
             builder.Services.AddApplicationServices();
             builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
             builder.Services.AddKeyedScoped<IDataInitializer, DataInitializer>("NotIdentity");
+
 
             var app = builder.Build();
 
