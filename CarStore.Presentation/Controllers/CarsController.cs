@@ -26,5 +26,12 @@ namespace CarStore.Presentation.Controllers
             var result = await _carService.GetAllCarsAsync(carQueryParams);
             return HandleResult(result);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Result<CarWithDetailsDTO>>> GetCarById(int id)
+        {
+            var result = await _carService.GetCarByID(id);
+            return HandleResult(result);
+        }
     }
 }

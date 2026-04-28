@@ -6,6 +6,7 @@ using CarStore.ServicesAbstraction;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
 using CarStore.Shared.C_DTOs.CarModuleDtos.Params;
 using CarStore.Shared.CommonResult;
+using Mapster;
 
 namespace CarStore.Services
 {
@@ -45,6 +46,22 @@ namespace CarStore.Services
                     carDTOList
                     );
         }
+
+        public async Task<Result<CarWithDetailsDTO>> GetCarByID(int carId)
+        {
+            var carSpec = new CarSpecification(carId);
+            var car=await _unitOfWork.GetRepository<Car, int>().GetByIdAsync(carSpec);
+            if (car is null)
+                return Error.NotFound("Car.NotFound", $"Car With Id {carId} is not Found!");
+
+           var carDto= car.Adapt<CarWithDetailsDTO>();//with mapster
+            (carDto.Price, carDto.PriceLabel) = GetCarPrice(car);
+            return carDto;
+
+
+        }
+
+        ////Helper Methods
         (decimal? carPrice, string priceLabel) GetCarPrice(Car car)
         {
             if (car == null)

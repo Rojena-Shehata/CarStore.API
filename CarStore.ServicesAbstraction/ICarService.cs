@@ -12,5 +12,6 @@ namespace CarStore.ServicesAbstraction
     public interface ICarService
     {
         Task<Result<PaginatedResult<CarDTO>>> GetAllCarsAsync(CarQueryParams carQueryParams);
+        Task<Result<CarWithDetailsDTO>> GetCarByID(int carId);
     }
 }

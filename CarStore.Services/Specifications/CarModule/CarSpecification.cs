@@ -31,5 +31,15 @@ namespace CarStore.Services.Specifications.CarModule
                     break;
             }
         }
+
+       
+        //Car By Id
+        public CarSpecification(int id) : base(car=>car.Id==id)
+        {
+            AddInclude(car => car.Brand);
+            AddInclude(car => car.Category);
+            AddInclude(car => car.Color);
+            
+        }
     }
 }
