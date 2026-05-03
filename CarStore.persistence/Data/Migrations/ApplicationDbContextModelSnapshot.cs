@@ -187,6 +187,24 @@ namespace CarStore.persistence.Data.Migrations
                     b.ToTable("Features");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "CarId");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
                 {
                     b.HasOne("CarStore.Domain.Entities.CarModule.Brand", "Brand")
@@ -255,9 +273,20 @@ namespace CarStore.persistence.Data.Migrations
                     b.Navigation("Feature");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
                 {
                     b.Navigation("CarFeatures");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

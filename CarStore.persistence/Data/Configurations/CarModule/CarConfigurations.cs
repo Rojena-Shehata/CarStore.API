@@ -46,6 +46,12 @@ namespace CarStore.persistence.Data.Configurations.CarModule
             carEntityBuilder.HasOne(c => c.Category)
                 .WithMany()
                 .HasForeignKey(c => c.CategoryId);
+
+            // m Reviews to 1 car
+            carEntityBuilder.HasMany(x => x.Reviews)
+                .WithOne()
+                .HasForeignKey(x => x.CarId);
+
             ////M CarFeatures to M Cars
             
             //carEntityBuilder.HasMany(car => car.Features)
