@@ -76,6 +76,9 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<int>("FuelType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MaxSpeed")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -130,6 +133,21 @@ namespace CarStore.persistence.Data.Migrations
                     b.ToTable("Colors");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.CarFeature", b =>
+                {
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CarId", "FeatureId");
+
+                    b.HasIndex("FeatureId");
+
+                    b.ToTable("CarFeatures");
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -146,6 +164,27 @@ namespace CarStore.persistence.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Feature", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Features");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
@@ -195,6 +234,30 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.Navigation("Engine")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.CarFeature", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", "Car")
+                        .WithMany("CarFeatures")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Feature", "Feature")
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+
+                    b.Navigation("Feature");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
+                {
+                    b.Navigation("CarFeatures");
                 });
 #pragma warning restore 612, 618
         }
