@@ -1,12 +1,7 @@
 ﻿using CarStore.Domain.Entities.CarModule;
+using CarStore.Domain.Entities.CarModule.Enums;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
 using Mapster;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarStore.Services.MapsterConfigurations
 {
@@ -18,12 +13,17 @@ namespace CarStore.Services.MapsterConfigurations
             ConfigureBrand();
             ConfigureEngine();
             ConfigureCar();
+            ConfigureFeature();
         }
         private static void ConfigureCar()
         {
             TypeAdapterConfig<Car, CarWithDetailsDTO>
-                .NewConfig();
-                
+                .NewConfig()
+                .Map(dest => dest.Features,
+         src => src.CarFeatures.Select(cf => cf.Feature))
+                .Map(dest=>dest.Drivetrain,
+                     src=>src.Drivetrain==Drivetrain.FourWD?"4WD":src.Drivetrain.ToString());
+
         }
         private static void ConfigureEngine()
         {
@@ -32,6 +32,10 @@ namespace CarStore.Services.MapsterConfigurations
         private static void ConfigureBrand()
         {
             TypeAdapterConfig<Brand, BrandDTO>.NewConfig();
+        }
+        private static void ConfigureFeature()
+        {
+            TypeAdapterConfig<Feature, FeatureDTO>.NewConfig();
         }
         private static void ConfigureCategory()
         {
