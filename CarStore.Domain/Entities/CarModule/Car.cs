@@ -1,6 +1,7 @@
 ﻿using CarStore.Domain.Entities.CarModule.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace CarStore.Domain.Entities.CarModule
         public string Name { get; set; } = default!;
         //images
         public decimal? SalePrice { get; set; }
+        public int? MaxSpeed { get; set; }
 
         public decimal? DailyRentPrice { get; set; }//per day
         public CarMode CarMode { get; set; }//sale or rent
@@ -37,6 +39,11 @@ namespace CarStore.Domain.Entities.CarModule
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
+        //Features
+        public ICollection<CarFeature> CarFeatures { get; set; }
 
+        ////UserFavouriteCar
+        //public UserFavouriteCar UserFavouriteCar { get; set; }
+        //public int UserFavouriteCarId { get; set; }
     }
 }
