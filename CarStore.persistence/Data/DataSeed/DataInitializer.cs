@@ -46,6 +46,17 @@ namespace CarStore.persistence.Data.DataSeed
                 {
                     await SeedDataFromJsonFileAsync("cars.json", _dbContext.Cars);
                 }
+
+                if (!await _dbContext.Features.AnyAsync())
+                {
+                    await SeedDataFromJsonFileAsync("features.json", _dbContext.Features);
+                }
+                await _dbContext.SaveChangesAsync();
+
+                if (!await _dbContext.CarFeatures.AnyAsync())
+                {
+                    await SeedDataFromJsonFileAsync("carFeatures.json", _dbContext.CarFeatures);
+                }
                 await _dbContext.SaveChangesAsync();
 
             }

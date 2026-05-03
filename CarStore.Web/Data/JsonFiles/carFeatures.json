@@ -1,0 +1,80 @@
+[
+  {
+    "CarId": 4,
+    "FeatureId": 1
+  },
+  {
+    "CarId": 4,
+    "FeatureId": 2
+  },
+  {
+    "CarId": 4,
+    "FeatureId": 3
+  },
+  {
+    "CarId": 4,
+    "FeatureId": 9
+  },
+  {
+    "CarId": 4,
+    "FeatureId": 10
+  },
+
+  {
+    "CarId": 5,
+    "FeatureId": 1
+  },
+  {
+    "CarId": 5,
+    "FeatureId": 4
+  },
+  {
+    "CarId": 5,
+    "FeatureId": 5
+  },
+  {
+    "CarId": 5,
+    "FeatureId": 11
+  },
+  {
+    "CarId": 5,
+    "FeatureId": 12
+  },
+  {
+    "CarId": 5,
+    "FeatureId": 13
+  },
+
+  {
+    "CarId": 6,
+    "FeatureId": 2
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 3
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 6
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 7
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 8
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 14
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 15
+  },
+  {
+    "CarId": 6,
+    "FeatureId": 16
+  }
+]
