@@ -51,5 +51,10 @@ namespace CarStore.persistence.Repositories
         {
             return await _dbSet.GetQuery<TEntity, TKey>(specification).FirstOrDefaultAsync();
         }
+
+        public async Task<int> CountAsync(ISpecification<TEntity> specification)
+        {
+            return await _dbSet.GetQuery<TEntity, TKey>(specification).CountAsync();
+        }
     }
 }

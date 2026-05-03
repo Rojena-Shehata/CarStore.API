@@ -35,9 +35,12 @@ namespace CarStore.persistence.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("SalesCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
@@ -51,11 +54,17 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CarMode")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("DailyRentPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -67,10 +76,16 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<int>("FuelType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MaxSpeed")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("SalePrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SeatsNumber")
                         .HasColumnType("int");
@@ -89,7 +104,7 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasIndex("ColorId");
 
-                    b.ToTable("Cars", null, t =>
+                    b.ToTable("Cars", t =>
                         {
                             t.HasCheckConstraint("CK_Car_Year", "[Year]>=1885 And [Year]<=2026");
                         });
@@ -115,7 +130,22 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Colors", (string)null);
+                    b.ToTable("Colors");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.CarFeature", b =>
+                {
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CarId", "FeatureId");
+
+                    b.HasIndex("FeatureId");
+
+                    b.ToTable("CarFeatures");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Category", b =>
@@ -133,7 +163,46 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Feature", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Features");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "CarId");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
@@ -156,7 +225,7 @@ namespace CarStore.persistence.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("CarStore.Domain.Entities.CarModule.Car.Engine#CarStore.Domain.Entities.CarModule.Engine", "Engine", b1 =>
+                    b.OwnsOne("CarStore.Domain.Entities.CarModule.Engine", "Engine", b1 =>
                         {
                             b1.Property<int>("CarId")
                                 .HasColumnType("int");
@@ -169,7 +238,7 @@ namespace CarStore.persistence.Data.Migrations
 
                             b1.HasKey("CarId");
 
-                            b1.ToTable("Cars", (string)null);
+                            b1.ToTable("Cars");
 
                             b1.WithOwner()
                                 .HasForeignKey("CarId");
@@ -183,6 +252,41 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.Navigation("Engine")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.CarFeature", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", "Car")
+                        .WithMany("CarFeatures")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Feature", "Feature")
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+
+                    b.Navigation("Feature");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>
+                {
+                    b.Navigation("CarFeatures");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

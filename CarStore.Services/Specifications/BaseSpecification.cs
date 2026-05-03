@@ -18,7 +18,9 @@ namespace CarStore.Services.Specifications
 
         public Expression<Func<T, bool>>? Criteria { get; private set; }
 
-        public List<Expression<Func<T, object>>> Includes { get; } = [];
+        //public List<Expression<Func<T, object>>> Includes { get; } = [];
+        public List<Func<IQueryable<T>, IQueryable<T>>> Includes { get; } = new();
+
 
         public Expression<Func<T, object>>? OrderByExpression { get; private set; }
 
@@ -39,7 +41,7 @@ namespace CarStore.Services.Specifications
             Skip = (pageIndex - 1) * pageSize;
         }
         //include
-        protected void AddInclude(Expression<Func<T, object>> includeExpression)
+        protected void AddInclude(Func<IQueryable<T>,IQueryable<T>> includeExpression)
         {
             Includes.Add(includeExpression);
         }

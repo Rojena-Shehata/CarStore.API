@@ -1,11 +1,6 @@
 ﻿using CarStore.Domain.Entities.CarModule;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarStore.persistence.Data.Configurations.CarModule
 {
@@ -28,9 +23,9 @@ namespace CarStore.persistence.Data.Configurations.CarModule
             carEntityBuilder
                 .Property(c => c.Description)
                 .HasMaxLength(500);
-           
+
             carEntityBuilder
-                .ToTable(c=>c.HasCheckConstraint(
+                .ToTable(c => c.HasCheckConstraint(
                     "CK_Car_Year",
                     $"[Year]>=1885 And [Year]<={DateTime.UtcNow.Year}"));
 
@@ -51,6 +46,21 @@ namespace CarStore.persistence.Data.Configurations.CarModule
             carEntityBuilder.HasOne(c => c.Category)
                 .WithMany()
                 .HasForeignKey(c => c.CategoryId);
+
+            // m Reviews to 1 car
+            carEntityBuilder.HasMany(x => x.Reviews)
+                .WithOne()
+                .HasForeignKey(x => x.CarId);
+
+            ////M CarFeatures to M Cars
+            
+            //carEntityBuilder.HasMany(car => car.Features)
+            //    .WithMany()
+            //    .UsingEntity<CarFeature>
+            //    (
+            //       r => r.HasOne<Feature>().WithMany().HasForeignKey(e => e.FeatureId),
+            //       l => l.HasOne<Car>().WithMany().HasForeignKey(e => e.CarId)
+            //    );  
 
         }
     }

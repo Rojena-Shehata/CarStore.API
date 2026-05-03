@@ -33,8 +33,14 @@ namespace CarStore.persistence
                 if (spec.Includes is not null&&spec.Includes.Any() )
                     query=spec.Includes.Aggregate(
                         query,
-                        (currentQuery,includeExp)=>
-                            currentQuery.Include(includeExp));
+                        (currentQuery,includequery)=>
+                                includequery(currentQuery)//
+                            );
+                //if (spec.Includes is not null&&spec.Includes.Any() )
+                //    query=spec.Includes.Aggregate(
+                //        query,
+                //        (currentQuery,includeExp)=>
+                //            currentQuery.Include(includeExp));
               
                 if (spec.IsSplitQuery)
                     query = query.AsSplitQuery();

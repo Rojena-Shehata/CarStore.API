@@ -1,4 +1,5 @@
-﻿using CarStore.Domain.Entities.CarModule;
+﻿using CarStore.Domain.Entities;
+using CarStore.Domain.Entities.CarModule;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -16,6 +17,9 @@ namespace CarStore.persistence.Data.DbContexts
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
         public DbSet<Car> Cars { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Feature> Features { get; set; }
+        public DbSet<CarFeature> CarFeatures { get; set; }
         public DbSet<CarColor> Colors { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
