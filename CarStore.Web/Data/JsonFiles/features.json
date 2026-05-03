@@ -1,0 +1,67 @@
+[
+  {
+    "Name": "ABS (Anti-lock Braking System)",
+    "Type": 1
+  },
+  {
+    "Name": "Airbags (Front & Side)",
+    "Type": 1
+  },
+  {
+    "Name": "Electronic Stability Control",
+    "Type": 1
+  },
+  {
+    "Name": "Traction Control System",
+    "Type": 1
+  },
+  {
+    "Name": "Lane Departure Warning",
+    "Type": 1
+  },
+  {
+    "Name": "Blind Spot Monitoring",
+    "Type": 1
+  },
+  {
+    "Name": "Adaptive Cruise Control",
+    "Type": 1
+  },
+  {
+    "Name": "Automatic Emergency Braking",
+    "Type": 1
+  },
+
+  {
+    "Name": "Touchscreen Infotainment System",
+    "Type": 2
+  },
+  {
+    "Name": "Bluetooth Connectivity",
+    "Type": 2
+  },
+  {
+    "Name": "Apple CarPlay",
+    "Type": 2
+  },
+  {
+    "Name": "Android Auto",
+    "Type": 2
+  },
+  {
+    "Name": "GPS Navigation System",
+    "Type": 2
+  },
+  {
+    "Name": "Voice Control System",
+    "Type": 2
+  },
+  {
+    "Name": "Wireless Charging",
+    "Type": 2
+  },
+  {
+    "Name": "360° Camera System",
+    "Type": 2
+  }
+]
