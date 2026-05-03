@@ -1,6 +1,7 @@
 ﻿using CarStore.Domain.Entities.CarModule;
 using CarStore.Shared.C_DTOs.CarModuleDtos.Params;
 using E_Commerce.Services.Specifications.ProductSpecifications;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,9 +37,10 @@ namespace CarStore.Services.Specifications.CarModule
         //Car By Id
         public CarSpecification(int id) : base(car=>car.Id==id)
         {
-            AddInclude(car => car.Brand);
-            AddInclude(car => car.Category);
-            AddInclude(car => car.Color);
+            AddInclude(query=>query.Include(c=>c.Brand));
+            AddInclude(query => query.Include(c => c.Category));
+            AddInclude(query => query.Include(c => c.Color));
+            AddInclude(query => query.Include(c => c.CarFeatures).ThenInclude(cf=>cf.Feature));
             
         }
     }
