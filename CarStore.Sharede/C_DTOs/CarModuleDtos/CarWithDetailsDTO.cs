@@ -1,7 +1,9 @@
 ﻿namespace CarStore.Shared.C_DTOs.CarModuleDtos
 {
-    public class CarWithDetailsDTO:IDAndNameDTO
-    {      
+    public class CarWithDetailsDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = default!;
         public decimal? Price { get; set; }
         public string PriceLabel { get; set; } = default!;
         public string? Description { get; set; } = default!;
@@ -24,8 +26,10 @@
 
         //->> 1 Category 
         public CategoryDTO Category { get; set; }
+        //Features
         public List<FeatureDTO> Features { get; set; }
-
+        //Reviews
+        public ReviewSummaryDto ReviewSummary { get; set; }
 
     }
 }

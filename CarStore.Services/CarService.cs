@@ -56,6 +56,13 @@ namespace CarStore.Services
 
            var carDto= car.Adapt<CarWithDetailsDTO>();//with mapster
             (carDto.Price, carDto.PriceLabel) = GetCarPrice(car);
+            if (car.Reviews is null || !car.Reviews.Any())
+                return carDto;
+            carDto.ReviewSummary = new ReviewSummaryDto
+            {
+                ReviewsCount = car.Reviews.Count(),
+                AverageRating = car.Reviews.Select(r => r.Rating).Average()
+            };
             return carDto;
 
 

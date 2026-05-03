@@ -42,6 +42,9 @@ namespace CarStore.Domain.Entities.CarModule
         //Features
         public ICollection<CarFeature> CarFeatures { get; set; }
 
+        //Reviews
+        public ICollection<Review> Reviews { get; set; }
+
         ////UserFavouriteCar
         //public UserFavouriteCar UserFavouriteCar { get; set; }
         //public int UserFavouriteCarId { get; set; }
