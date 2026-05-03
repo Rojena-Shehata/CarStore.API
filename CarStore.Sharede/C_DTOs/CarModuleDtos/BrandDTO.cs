@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CarStore.Shared.C_DTOs.CarModuleDtos
 {
-    public class BrandDTO
+    public class BrandDTO:IDAndNameDTO
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = default!;
+       
     }
 }

@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarStore.Shared.C_DTOs
+namespace CarStore.Shared.C_DTOs.CarModuleDtos
 {
-    public class ColorDTO
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = default!;
+    public class ColorDTO:IDAndNameDTO
+    {      
         public string HexCode { get; set; } = default!;
     }
 }
