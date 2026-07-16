@@ -9,11 +9,14 @@ namespace CarStore.ServicesAbstraction
         Task<Result<AuthResponseDto>> RegisterAsync(string fullName, string email, string phone, string password);
         //Task<Result> LogoutAsync(string refreshToken);
 
-        //Task<Result> SendEmailVerificationTokenAsync(string email);
-        //Task<Result<AuthResponseDto>> EmailVerificationAsync(string email, string refreshToken);
+        Task<Result> SendEmailVerificationTokenAsync(string email);
+        Task<Result<AuthResponseDto>> EmailVerificationAsync(string email, string code);
 
         Task<Result> ForgotPasswordAsync(string email);
-        Task<Result> ResetPasswordAsync(string email, string token, string newPassword, string confirmNewPassword);
+        Task<Result> VerifyResetCodeAsync(string email, string code);
+        Task<Result> ResetPasswordAsync(string email, string code, string newPassword, string confirmNewPassword);
+
+        Task<Result<AccountFoundDto?>> CheckExistingAccountAsync(string email, string phone);
 
         Task<Result<AuthResponseDto>> GoogleSignInAsync(string idToken);
         Task<Result<AuthResponseDto>> GoogleSignUpAsync(string idToken);

@@ -15,7 +15,7 @@ namespace CarStore.Services.Services
     public class TokenService(
         UserManager<ApplicationUser> _userManager,
         IOptions<JwtSettings> _options,
-        IUnitOfWork _unitOfWork) : ITokenService
+        IIdentityUnitOfWork _unitOfWork) : ITokenService
     {
         public async Task<string> CreateAccessTokenAsync(ApplicationUser user)
         {
@@ -31,7 +31,6 @@ namespace CarStore.Services.Services
                 userClaims.Add(new Claim(ClaimTypes.Role, role));
 
             JwtSettings jwtSettings = _options.Value;
-
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
             SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

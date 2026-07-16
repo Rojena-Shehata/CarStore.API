@@ -1,33 +1,36 @@
-﻿using System.Text;
-using Google.Apis.Auth;
-using CarStore.Shared.Dtos;
-using System.Security.Claims;
-using CarStore.Shared.Settings;
-using Microsoft.Extensions.Options;
+﻿using CarStore.Domain.Contracts;
+using CarStore.Domain.Entities;
+using CarStore.Domain.Entities.IdentityModule;
+using CarStore.Domain.Enums;
+using CarStore.Services.Specifications;
 using CarStore.ServicesAbstraction;
 using CarStore.Shared.CommonResult;
-using Microsoft.EntityFrameworkCore;
+using CarStore.Shared.Dtos;
+using CarStore.Shared.Settings;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using CarStore.Domain.Entities.IdentityModule;
-using CarStore.Domain.Contracts;
-using CarStore.Services.Specifications;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CarStore.Services.Services
 {
     public class AuthService(
-        UserManager<ApplicationUser> _userManager,
-        IEmailService _emailService,
-        ITokenService _tokenService,
-        IOptions<JwtSettings> _jwtOptions,
-        IOptions<GoogleAuthSettings> _googleOptions,
-        IHttpContextAccessor _httpContextAccessor,
-        IUnitOfWork _unitOfWork) : IAuthService
+         UserManager<ApplicationUser> _userManager,
+         IEmailService _emailService,
+         ITokenService _tokenService,
+         IOptions<JwtSettings> _jwtOptions,
+         IOptions<GoogleAuthSettings> _googleOptions,
+         IHttpContextAccessor _httpContextAccessor,
+         IIdentityUnitOfWork _identityUnitOfWork) : IAuthService
     {
 
 
@@ -37,8 +40,8 @@ namespace CarStore.Services.Services
             if (user is null)
                 return Error.NotFound(description: "User with this email not found.");
 
-            //if (!await _userManager.IsEmailConfirmedAsync(user))
-            //    return Error.Validation(description: "Email is not confirmed. Please verify your email before logging in.");
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+                return Error.Validation(description: "Email is not confirmed. Please verify your email before logging in.");
 
             if (!await _userManager.CheckPasswordAsync(user, password))
                 return Error.InvalidCredentials(description: "Email or Password is incorrect.");
@@ -49,12 +52,16 @@ namespace CarStore.Services.Services
         public async Task<Result<AuthResponseDto>> RegisterAsync(string fullName, string email, string phone, string password)
         {
             if (await _userManager.FindByEmailAsync(email) is not null)
-                return Error.Validation(description: "User with this email already exist.");
+                return Error.Validation(code: "Error.EmailInUse", description: "User with this email already exist.");
+
+            if (await _userManager.Users.AnyAsync(u => u.PhoneNumber == phone))
+                return Error.Validation(code: "Error.PhoneInUse", description: "An account with this phone number already exists.");
 
             ApplicationUser user = new()
             {
                 FullName = fullName,
                 Email = email,
+                PhoneNumber = phone,
                 UserName = email.Split('@')[0],
             };
 
@@ -64,43 +71,65 @@ namespace CarStore.Services.Services
 
             // Handle role later
 
+            await SendEmailVerificationTokenAsync(email);
+
             return await generateAuthResponseAsync(user);
         }
 
-        //public async Task<Result> SendEmailVerificationTokenAsync(string email)
-        //{
-        //    ApplicationUser? user = await _userManager.FindByEmailAsync(email);
-        //    if (user is null)
-        //        return Error.NotFound(description: "User with this email not found.");
+        public async Task<Result<AccountFoundDto?>> CheckExistingAccountAsync(string email, string phone)
+        {
+            ApplicationUser? existingUser = await _userManager.FindByEmailAsync(email)
+                ?? await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phone);
 
-        //    string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        //    string encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            if (existingUser is null)
+                return Result<AccountFoundDto?>.Ok(null);
 
-        //    string emailVerificationLink = $"https://MotorAI.com/email-verification?email={email}&refreshToken={encodedToken}";
-        //    string htmlBody = emailVerificationHtmlBody(emailVerificationLink);
+            return Result<AccountFoundDto?>.Ok(new AccountFoundDto(existingUser.FullName, existingUser.Email!, existingUser.PhoneNumber ?? string.Empty));
+        }
 
-        //    await _emailService.SendEmailAsync(email, "Motor AI - Email Verification", htmlBody);
+        public async Task<Result> SendEmailVerificationTokenAsync(string email)
+        {
+            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return Error.NotFound(description: "User with this email not found.");
 
-        //    return Result.Ok();
-        //}
+            if (await _userManager.IsEmailConfirmedAsync(user))
+                return Error.Validation(description: "Email is already confirmed.");
 
-        //public async Task<Result<AuthResponseDto>> EmailVerificationAsync(string email, string token)
-        //{
-        //    ApplicationUser? user = await _userManager.FindByEmailAsync(email);
-        //    if (user is null)
-        //        return Error.NotFound(description: "User with this email not found.");
+            string code = await generateAndStoreCodeAsync(email, VerificationCodePurpose.EmailConfirmation);
 
-        //    if (await _userManager.IsEmailConfirmedAsync(user))
-        //        return Error.Validation(description: "Email is already confirmed.");
+            string htmlBody = emailVerificationHtmlBody(code);
+            await _emailService.SendEmailAsync(email, "Motor AI - Email Verification", htmlBody);
 
-        //    string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            return Result.Ok();
+        }
 
-        //    IdentityResult identityResult = await _userManager.ConfirmEmailAsync(user, decodedToken);
-        //    if (!identityResult.Succeeded)
-        //        return Error.Validation(description: string.Join(", ", identityResult.Errors.Select(e => e.Description).ToList()));
+        public async Task<Result<AuthResponseDto>> EmailVerificationAsync(string email, string code)
+        {
+            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return Error.NotFound(description: "User with this email not found.");
 
-        //    return await generateAuthResponseAsync(user);
-        //}
+            if (await _userManager.IsEmailConfirmedAsync(user))
+                return Error.Validation(description: "Email is already confirmed.");
+
+            var codeResult = await validateCodeAsync(email, code, VerificationCodePurpose.EmailConfirmation);
+            if (codeResult.IsFailed)
+                return codeResult.Errors.ToList();
+
+            VerificationCode verificationCode = codeResult.Value;
+            verificationCode.IsUsed = true;
+            _identityUnitOfWork.GetRepository<VerificationCode, int>().Update(verificationCode);
+
+            user.EmailConfirmed = true;
+            IdentityResult identityResult = await _userManager.UpdateAsync(user);
+            if (!identityResult.Succeeded)
+                return Error.Failure(description: string.Join(", ", identityResult.Errors.Select(e => e.Description).ToList()));
+
+            await _identityUnitOfWork.SaveChangesAsync();
+
+            return await generateAuthResponseAsync(user);
+        }
 
         public async Task<Result> ForgotPasswordAsync(string email)
         {
@@ -108,27 +137,54 @@ namespace CarStore.Services.Services
             if (user is null)
                 return Error.NotFound(description: "User with this email not found.");
 
-            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            string encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            string code = await generateAndStoreCodeAsync(email, VerificationCodePurpose.PasswordReset);
 
-            string htmlBody = forgetPasswordHtmlBody(encodedToken);
-
+            string htmlBody = forgetPasswordHtmlBody(code);
             await _emailService.SendEmailAsync(email, "Motor AI - Reset Password", htmlBody);
 
             return Result.Ok();
         }
 
-        public async Task<Result> ResetPasswordAsync(string email, string token, string newPassword, string confirmNewPassword)
+        public async Task<Result> VerifyResetCodeAsync(string email, string code)
         {
             ApplicationUser? user = await _userManager.FindByEmailAsync(email);
             if (user is null)
                 return Error.NotFound(description: "User with this email not found.");
 
-            string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            var codeResult = await validateCodeAsync(email, code, VerificationCodePurpose.PasswordReset);
+            if (codeResult.IsFailed)
+                return codeResult.Errors.ToList();
 
-            IdentityResult identityResult = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+            VerificationCode verificationCode = codeResult.Value;
+            verificationCode.IsVerified = true;
+            _identityUnitOfWork.GetRepository<VerificationCode, int>().Update(verificationCode);
+            await _identityUnitOfWork.SaveChangesAsync();
+
+            return Result.Ok();
+        }
+
+        public async Task<Result> ResetPasswordAsync(string email, string code, string newPassword, string confirmNewPassword)
+        {
+            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return Error.NotFound(description: "User with this email not found.");
+
+            var codeResult = await validateCodeAsync(email, code, VerificationCodePurpose.PasswordReset);
+            if (codeResult.IsFailed)
+                return codeResult.Errors.ToList();
+
+            VerificationCode verificationCode = codeResult.Value;
+            if (!verificationCode.IsVerified)
+                return Error.Validation(description: "Please verify the code before resetting the password.");
+
+            string identityToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            IdentityResult identityResult = await _userManager.ResetPasswordAsync(user, identityToken, newPassword);
             if (!identityResult.Succeeded)
                 return Error.Failure(description: string.Join(", ", identityResult.Errors.Select(e => e.Description).ToList()));
+
+            verificationCode.IsUsed = true;
+            _identityUnitOfWork.GetRepository<VerificationCode, int>().Update(verificationCode);
+            await _identityUnitOfWork.SaveChangesAsync();
 
             return Result.Ok();
         }
@@ -192,7 +248,7 @@ namespace CarStore.Services.Services
         public async Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
         {
             RefreshTokenSpecification refreshTokenSpecification = new RefreshTokenSpecification(refreshToken);
-            RefreshToken? existingRefreshToken = await _unitOfWork.GetRepository<RefreshToken, int>()
+            RefreshToken? existingRefreshToken = await _identityUnitOfWork.GetRepository<RefreshToken, int>()
                 .GetByIdAsync(refreshTokenSpecification);
 
             if (existingRefreshToken == null)
@@ -207,8 +263,8 @@ namespace CarStore.Services.Services
                 return Error.NotFound(description: "User not found.");
 
             existingRefreshToken.RevokedOn = DateTime.UtcNow;
-            _unitOfWork.GetRepository<RefreshToken, int>().Update(existingRefreshToken);
-            await _unitOfWork.SaveChangesAsync();
+            _identityUnitOfWork.GetRepository<RefreshToken, int>().Update(existingRefreshToken);
+            await _identityUnitOfWork.SaveChangesAsync();
 
             return await generateAuthResponseAsync(user);
         }
@@ -216,7 +272,7 @@ namespace CarStore.Services.Services
         public async Task<Result> RevokeRefreshTokenAsync(string refreshToken)
         {
             RefreshTokenSpecification refreshTokenSpecification = new RefreshTokenSpecification(refreshToken);
-            RefreshToken? existingRefreshToken = await _unitOfWork.GetRepository<RefreshToken, int>()
+            RefreshToken? existingRefreshToken = await _identityUnitOfWork.GetRepository<RefreshToken, int>()
                 .GetByIdAsync(refreshTokenSpecification);
 
             if (existingRefreshToken == null)
@@ -230,13 +286,75 @@ namespace CarStore.Services.Services
                 return Error.Unauthorized();
 
             existingRefreshToken.RevokedOn = DateTime.UtcNow;
-            _unitOfWork.GetRepository<RefreshToken, int>().Update(existingRefreshToken);
-            await _unitOfWork.SaveChangesAsync();
+            _identityUnitOfWork.GetRepository<RefreshToken, int>().Update(existingRefreshToken);
+            await _identityUnitOfWork.SaveChangesAsync();
 
             return Result.Ok();
         }
 
         // Helper Methods
+        private const int CodeExpirationMinutes = 10;
+        private const int MaxAttempts = 5;
+
+        private async Task<string> generateAndStoreCodeAsync(string email, VerificationCodePurpose purpose)
+        {
+            // Invalidate any previous unused codes for the same email/purpose
+            var repository = _identityUnitOfWork.GetRepository<VerificationCode, int>();
+            var previousCodes = await repository.GetAllAsync(new ActiveVerificationCodeSpecification(email, purpose));
+            foreach (var previousCode in previousCodes)
+            {
+                previousCode.IsUsed = true;
+                repository.Update(previousCode);
+            }
+
+            string code = RandomNumberGenerator.GetInt32(0, 10000).ToString("D4");
+
+            VerificationCode verificationCode = new()
+            {
+                Email = email,
+                Purpose = purpose,
+                CodeHash = hashCode(code),
+                CreatedOn = DateTime.UtcNow,
+                ExpiresOn = DateTime.UtcNow.AddMinutes(CodeExpirationMinutes)
+            };
+            repository.Add(verificationCode);
+
+            await _identityUnitOfWork.SaveChangesAsync();
+
+            return code;
+        }
+
+        private async Task<Result<VerificationCode>> validateCodeAsync(string email, string code, VerificationCodePurpose purpose)
+        {
+            var repository = _identityUnitOfWork.GetRepository<VerificationCode, int>();
+            VerificationCode? verificationCode = await repository.GetByIdAsync(new ActiveVerificationCodeSpecification(email, purpose));
+
+            if (verificationCode is null)
+                return Error.Validation(description: "Invalid or expired verification code.");
+
+            if (verificationCode.ExpiresOn <= DateTime.UtcNow)
+                return Error.Validation(description: "Verification code has expired. Please request a new one.");
+
+            if (verificationCode.AttemptsCount >= MaxAttempts)
+                return Error.Validation(description: "Too many attempts. Please request a new code.");
+
+            if (verificationCode.CodeHash != hashCode(code))
+            {
+                verificationCode.AttemptsCount++;
+                repository.Update(verificationCode);
+                await _identityUnitOfWork.SaveChangesAsync();
+                return Error.Validation(description: "Invalid verification code.");
+            }
+
+            return verificationCode;
+        }
+
+        private static string hashCode(string code)
+        {
+            byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(code));
+            return Convert.ToHexString(hashBytes);
+        }
+
         private async Task<Result<GoogleJsonWebSignature.Payload>> ValidateGoogleTokenAsync(string idToken)
         {
             try
@@ -266,26 +384,24 @@ namespace CarStore.Services.Services
                 DateTime.UtcNow.AddMinutes(_jwtOptions.Value.AccessTokenExpirationMinutes)
             );
 
-        //private string emailVerificationHtmlBody(string emailVerificationLink) =>
-        //   $@"
-        //    <div style='font-family:Arial, sans-serif; max-width:600px; margin:auto; background:#f8f9fa; padding:30px; border-radius:10px;'>
-        //        <div style='text-align:center; margin-bottom:20px;'>
-        //            <img src='https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQnJpS4xY3itSCDGZF_c0ekzP-vnEnNWvoF3CEI2gJjHxe3doc3' alt='Motor AI' style='width:120px;'>
-        //        </div>
-        //        <h2 style='color:#2c3e50; text-align:center;'>Verify Your Email</h2>
-        //        <p style='color:#555;'>Hello,</p>
-        //        <p style='color:#555;'>We received a request to verify your email. Click the button below to continue:</p>
-        //        <div style='text-align:center; margin:30px 0;'>
-        //            <a href='{emailVerificationLink}' style='background:#3498db; color:white; padding:14px 28px; text-decoration:none; font-weight:bold; border-radius:6px; display:inline-block;'>
-        //                Verify Email
-        //            </a>
-        //        </div>
-        //        <p style='color:#555;'>This link will expire soon.</p>
-        //        <p style='color:#888; font-size:12px;'>If you didn’t request this, please ignore this email.</p>
-        //        <hr style='border:none; border-top:1px solid #eee; margin:20px 0;'/>
-        //        <p style='color:#888; font-size:12px; text-align:center;'>Thanks, <br/>The Motor AI Team.</p>
-        //    </div>
-        //    ";
+        private string emailVerificationHtmlBody(string token) =>
+           $@"
+            <div style='font-family:Arial, sans-serif; max-width:600px; margin:auto; background:#f8f9fa; padding:30px; border-radius:10px;'>
+                <div style='text-align:center; margin-bottom:20px;'>
+                    <img src='https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQnJpS4xY3itSCDGZF_c0ekzP-vnEnNWvoF3CEI2gJjHxe3doc3' alt='Motor AI' style='width:120px;'>
+                </div>
+                <h2 style='color:#2c3e50; text-align:center;'>Verify Your Email</h2>
+                <p style='color:#555;'>Hello,</p>
+                <p style='color:#555;'>We received a request to verify your email. Use the code below to continue:</p>
+                <div style='text-align:center; margin:30px 0; word-break:break-all;'>
+                   {token}
+                </div>
+                <p style='color:#555;'>This code will expire soon.</p>
+                <p style='color:#888; font-size:12px;'>If you didn’t request this, please ignore this email.</p>
+                <hr style='border:none; border-top:1px solid #eee; margin:20px 0;'/>
+                <p style='color:#888; font-size:12px; text-align:center;'>Thanks, <br/>The Motor AI Team.</p>
+            </div>
+            ";
 
         private string forgetPasswordHtmlBody(string token) =>
            $@"

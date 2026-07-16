@@ -17,6 +17,14 @@ namespace CarStore.Presentation.Controllers
             return HandleResult<AuthResponseDto>(result);
         }
 
+        [HttpPost("check-account")]
+        public async Task<IActionResult> CheckAccount([FromBody] CheckAccountDto checkAccountDto)
+        {
+            Result<AccountFoundDto?> result = await _authService.CheckExistingAccountAsync(checkAccountDto.Email, checkAccountDto.Phone);
+
+            return HandleResult<AccountFoundDto?>(result);
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
         {
@@ -25,26 +33,33 @@ namespace CarStore.Presentation.Controllers
             return HandleResult<AuthResponseDto>(result);
         }
 
-        //[HttpPost("resend-email-verification")]
-        //public async Task<IActionResult> SendEmailVerificationToken([FromBody] ResendEmailVerificationDto resendEmailVerificationDto)
-        //{
-        //    Result result = await _authService.SendEmailVerificationTokenAsync(resendEmailVerificationDto.Email);
+        [HttpPost("resend-email-verification")]
+        public async Task<IActionResult> SendEmailVerificationToken([FromBody] ResendEmailVerificationDto resendEmailVerificationDto)
+        {
+            Result result = await _authService.SendEmailVerificationTokenAsync(resendEmailVerificationDto.Email);
 
-        //    return HandleResult(result);
-        //}
+            return HandleResult(result);
+        }
 
-        //[HttpPost("email-verification")]
-        //public async Task<IActionResult> EmailVerification([FromBody] EmailVerificationDto emailVerificationDto)
-        //{
-        //    Result<AuthResponseDto> result = await _authService.EmailVerificationAsync(emailVerificationDto.Email, emailVerificationDto.Token);
+        [HttpPost("email-verification")]
+        public async Task<IActionResult> EmailVerification([FromBody] EmailVerificationDto emailVerificationDto)
+        {
+            Result<AuthResponseDto> result = await _authService.EmailVerificationAsync(emailVerificationDto.Email, emailVerificationDto.Code);
 
-        //    return HandleResult<AuthResponseDto>(result);
-        //}
+            return HandleResult<AuthResponseDto>(result);
+        }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
         {
             Result result = await _authService.ForgotPasswordAsync(forgotPasswordDto.Email);
+            return HandleResult(result);
+        }
+
+        [HttpPost("verify-reset-code")]
+        public async Task<IActionResult> VerifyResetCode([FromBody] VerifyResetCodeDto verifyResetCodeDto)
+        {
+            Result result = await _authService.VerifyResetCodeAsync(verifyResetCodeDto.Email, verifyResetCodeDto.Code);
 
             return HandleResult(result);
         }
@@ -52,7 +67,7 @@ namespace CarStore.Presentation.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
-            Result result = await _authService.ResetPasswordAsync(resetPasswordDto.Email, resetPasswordDto.Token, resetPasswordDto.NewPassword, resetPasswordDto.ConfirmNewPassword);
+            Result result = await _authService.ResetPasswordAsync(resetPasswordDto.Email, resetPasswordDto.Code, resetPasswordDto.NewPassword, resetPasswordDto.ConfirmNewPassword);
 
             return HandleResult(result);
         }

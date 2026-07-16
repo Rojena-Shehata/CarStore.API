@@ -13,7 +13,7 @@ namespace CarStore.Services.Validation.AuthValidation
               .EmailAddress().WithMessage("A valid email required.")
               .Must(x => x.EndsWith("@gmail.com")).WithMessage("Only Gmail addresses are allowed.");
 
-            RuleFor(x => x.Token)
+            RuleFor(x => x.Code)
                .NotEmpty().WithMessage("Token is required.");
         }
     }
