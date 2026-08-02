@@ -11,7 +11,7 @@ namespace CarStore.Domain.Entities.CarModule
     public class Car:BaseEntity<int>
     {
         public string Name { get; set; } = default!;
-        //images
+        public string ImageUrl { get; set; } = default!;
         public decimal? SalePrice { get; set; }
         public int? MaxSpeed { get; set; }
 
