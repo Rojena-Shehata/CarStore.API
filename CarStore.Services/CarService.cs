@@ -1,22 +1,26 @@
 ﻿using CarStore.Domain.Contracts;
 using CarStore.Domain.Entities.CarModule;
 using CarStore.Domain.Entities.CarModule.Enums;
+using CarStore.Services.MappingProfiles;
 using CarStore.Services.Specifications.CarModule;
 using CarStore.ServicesAbstraction;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
 using CarStore.Shared.C_DTOs.CarModuleDtos.Params;
 using CarStore.Shared.CommonResult;
 using Mapster;
+using Microsoft.Extensions.Configuration;
 
 namespace CarStore.Services
 {
     public class CarService : ICarService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _configuration;
 
-        public CarService(IUnitOfWork unitOfWork)
+        public CarService(IUnitOfWork unitOfWork,IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
 
         public async Task<Result<PaginatedResult<CarDTO>>> GetAllCarsAsync(CarQueryParams carQueryParams)
@@ -32,6 +36,7 @@ namespace CarStore.Services
                 {
                     Id = car.Id,
                     Name = car.Name,
+                    ImageUrl = car.ImageUrl.ToImageUrl(_configuration),
                     Price = priceInfo.carPrice,
                     PriceLabel = priceInfo.priceLabel
                 };
