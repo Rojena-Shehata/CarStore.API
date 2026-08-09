@@ -8,6 +8,7 @@ using CarStore.Web.Extentions;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
+using CarStore.Services.Extensions;
 
 namespace CarStore.Web
 {
@@ -52,6 +53,7 @@ namespace CarStore.Web
 
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

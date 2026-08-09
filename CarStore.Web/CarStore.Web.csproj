@@ -7,17 +7,20 @@
     <UserSecretsId>ee3131e4-8c31-4ff1-9bb1-68f93c89d817</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5">
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.24">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <ProjectReference Include="..\CarStore.persistence\CarStore.persistence.csproj" />
     <ProjectReference Include="..\CarStore.Presentation\CarStore.Presentation.csproj" />
+    <ProjectReference Include="..\CarStore.ServicesAbstraction\CarStore.ServicesAbstraction.csproj" />
+    <ProjectReference Include="..\CarStore.Services\CarStore.Services.csproj" />
+    <ProjectReference Include="..\CarStore.Sharede\CarStore.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

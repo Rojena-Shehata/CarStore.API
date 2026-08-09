@@ -34,7 +34,7 @@ namespace CarStore.Services.Specifications
 
         /////Methods
         //Apply Pagination
-        protected void ApplyPagination(int pageIndex,int pageSize)
+        protected void ApplyPagination(int pageIndex, int pageSize)
         {
             IsPaginated = true;
             Take = pageSize;
@@ -48,7 +48,6 @@ namespace CarStore.Services.Specifications
         //orderBy
         protected void AddOrderBy(Expression<Func<T, object>> orederByExp)
         {
-            OrderByExpression=orederByExp;
         }
         
         protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescExp)

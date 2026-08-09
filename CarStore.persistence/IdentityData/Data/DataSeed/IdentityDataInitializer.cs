@@ -1,5 +1,6 @@
 ﻿using CarStore.Domain.Contracts;
 using CarStore.Domain.Entities;
+using CarStore.Domain.Entities.IdentityModule;
 using CarStore.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

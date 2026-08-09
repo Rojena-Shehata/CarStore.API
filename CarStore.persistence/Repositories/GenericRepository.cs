@@ -1,12 +1,6 @@
 ﻿using CarStore.Domain.Contracts;
 using CarStore.Domain.Entities;
-using CarStore.persistence.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarStore.persistence.Repositories
 {
@@ -14,19 +8,16 @@ namespace CarStore.persistence.Repositories
                                                             where TEntity : BaseEntity<TKey>
     {
         private readonly DbSet<TEntity> _dbSet;
-        public GenericRepository(ApplicationDbContext context)
+        public GenericRepository(DbContext context)
         {
             _dbSet = context.Set<TEntity>();
         }
 
-        
         public async Task<IEnumerable<TEntity>> GetAllAsync()
-            =>await _dbSet.ToListAsync();
-
+            => await _dbSet.ToListAsync();
 
         public async Task<TEntity?> GetByIdAsync(TKey Id)
             => await _dbSet.FindAsync(Id);
-
 
         public void Add(TEntity entity)
         {
@@ -44,7 +35,7 @@ namespace CarStore.persistence.Repositories
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification)
         {
-           return await _dbSet.GetQuery<TEntity,TKey>(specification).ToListAsync();
+            return await _dbSet.GetQuery<TEntity, TKey>(specification).ToListAsync();
         }
 
         public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity> specification)

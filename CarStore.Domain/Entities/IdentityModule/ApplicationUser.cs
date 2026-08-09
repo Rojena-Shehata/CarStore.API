@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace CarStore.Domain.Entities
+namespace CarStore.Domain.Entities.IdentityModule
 {
     public class ApplicationUser : IdentityUser
     {
