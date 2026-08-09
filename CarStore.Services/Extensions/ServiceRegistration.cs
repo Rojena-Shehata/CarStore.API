@@ -2,12 +2,12 @@
 using FluentValidation;
 using CarStore.Shared.Settings;
 using CarStore.Services.Services;
-using FluentValidation.AspNetCore;
 using CarStore.ServicesAbstraction;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FluentValidation.AspNetCore;
 
 namespace CarStore.Services.Extensions
 {
