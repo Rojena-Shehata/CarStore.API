@@ -66,10 +66,6 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<decimal?>("DailyRentPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<int>("Drivetrain")
                         .HasColumnType("int");
 
@@ -84,6 +80,10 @@ namespace CarStore.persistence.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Overview")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<decimal?>("SalePrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -93,7 +93,7 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<int?>("TransmissionType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Year")
+                    b.Property<int>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -148,6 +148,32 @@ namespace CarStore.persistence.Data.Migrations
                     b.ToTable("CarFeatures");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.CarImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(2050)
+                        .HasColumnType("nvarchar(2050)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("CarImages");
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -185,6 +211,21 @@ namespace CarStore.persistence.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Features");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.UserFavouriteCar", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "CarId");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("UserFavouriteCar");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
@@ -273,6 +314,26 @@ namespace CarStore.persistence.Data.Migrations
                     b.Navigation("Feature");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.CarImage", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", null)
+                        .WithMany("Images")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.CarModule.UserFavouriteCar", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", "Car")
+                        .WithMany("UserFavouriteCars")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
                 {
                     b.HasOne("CarStore.Domain.Entities.CarModule.Car", null)
@@ -286,7 +347,11 @@ namespace CarStore.persistence.Data.Migrations
                 {
                     b.Navigation("CarFeatures");
 
+                    b.Navigation("Images");
+
                     b.Navigation("Reviews");
+
+                    b.Navigation("UserFavouriteCars");
                 });
 #pragma warning restore 612, 618
         }
