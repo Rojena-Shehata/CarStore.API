@@ -9,7 +9,7 @@ namespace CarStore.Domain.Contracts
 {
     public interface IUnitOfWork
     {
-        IGenericRepository<TEntity,TKey> GetRepository<TEntity,TKey>() where TEntity:BaseEntity<TKey>;
+        IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class;
         Task<int> SaveChangesAsync();
     }
 }

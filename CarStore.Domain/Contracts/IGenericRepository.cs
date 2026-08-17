@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace CarStore.Domain.Contracts
 {
-    public interface IGenericRepository<TEntity,TKey>where TEntity:BaseEntity<TKey>
+    public interface IGenericRepository<TEntity,TKey> where TEntity : class
     {
+        IQueryable<TEntity> GetTable(ISpecification<TEntity> specification);
+        IQueryable<TEntity> GetTable();
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification);
         Task<TEntity?> GetByIdAsync(TKey Id);

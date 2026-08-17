@@ -35,14 +35,14 @@ namespace CarStore.persistence.IdentityData.Data.DataSeed
                         FullName = "Admin User",
                         UserName = "Admin_User",
 
-                       Email = "admin@example.com",
+                       Email = "admin@gmail.com",
                         PhoneNumber = "01113129654"
                     };
                     var user02 = new ApplicationUser()
                     {
                         FullName = "Super Admin User",
                         UserName = "Super_Admin_User",
-                        Email = "superadmin@example.com",
+                        Email = "superadmin@gmail.com",
                         PhoneNumber = "01113129454"
                     };
                     await userManager.CreateAsync(user01, "P@ssw0rd");
