@@ -23,6 +23,8 @@ namespace CarStore.persistence.Data.DbContexts
         public DbSet<CarColor> Colors { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CarImage> CarImages { get; set; }
+
 
     }
 }
