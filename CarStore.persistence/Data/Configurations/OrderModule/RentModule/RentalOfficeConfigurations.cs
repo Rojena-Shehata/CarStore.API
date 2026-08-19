@@ -13,6 +13,15 @@ namespace CarStore.persistence.Data.Configurations.OrderModule.RentModule
     {
         public void Configure(EntityTypeBuilder<RentalOffice> builder)
         {
+            builder.ToTable("RentalOffices");
+
+            builder.HasKey(o => o.Id);
+
+            builder.Property(o => o.Name)
+                .HasMaxLength(150);
+
+            builder.Property(o => o.Address)
+                .HasMaxLength(250);
         }
     }
 }

@@ -13,6 +13,12 @@ namespace CarStore.persistence.Data.Configurations.OrderModule.Shared
     {
         public void Configure(EntityTypeBuilder<DriverDetails> builder)
         {
+            builder.Property(r => r.FirstName).HasMaxLength(50);
+            builder.Property(r => r.LastName).HasMaxLength(50);
+            builder.Property(r => r.NationalId).HasMaxLength(20);
+            builder.Property(r => r.PhoneNumber).HasMaxLength(20);
+            builder.Property(r => r.Email).HasMaxLength(100);
+
         }
     }
 }
