@@ -1,5 +1,6 @@
 ﻿using CarStore.Domain.Entities;
 using CarStore.Domain.Entities.CarModule;
+using CarStore.Domain.Entities.OrderModule.BuyModule;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -23,6 +24,8 @@ namespace CarStore.persistence.Data.DbContexts
         public DbSet<CarColor> Colors { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Buy> Buys { get; set; }
+        public DbSet<Finance> Finances { get; set; }
 
     }
 }
