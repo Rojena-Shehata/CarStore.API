@@ -5,28 +5,28 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CarStore.Domain.Entities.OrderModule.BuyModule.Enums;
+using CarStore.Domain.Entities.OrderModule.PurchaseModule.Enums;
 
-namespace CarStore.Domain.Entities.OrderModule.BuyModule
+namespace CarStore.Domain.Entities.OrderModule.PurchaseModule
 {
-    public class Buy : BaseEntity<int>
+    public class PurchaseRequest : BaseEntity<int>
     {
         public string ReferenceNumber { get; set; } = default!;
         public decimal TotalPrice { get; set; }
-        public BuyType BuyType { get; set; }
+        public PurchaseRequestType PurchaseRequestType { get; set; }
 
 
         //Relationships
 
-        // Many Buys -> One DriverInfo
+        // Many PurchaseRequests -> One DriverInfo
         //public int DriverInfoId { get; set; }
-        ////public DriverInfo Driver { get; set; } = default!;
+        //public DriverInfo Driver { get; set; } = default!;
 
-        // Many Buys -> One Car
+        // Many PurchaseRequests -> One Car
         public int CarId { get; set; }
         public Car Car { get; set; } = default!;
 
-        // One Buy -> Zero or One Finance
+        // One PurchaseRequest -> Zero or One Finance
         public Finance? Finance { get; set; }
     }
 

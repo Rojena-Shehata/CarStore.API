@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CarStore.Domain.Entities.OrderModule.BuyModule;
+using CarStore.Domain.Entities.OrderModule.PurchaseModule;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CarStore.persistence.Data.Configurations.BuyModule
+namespace CarStore.persistence.Data.Configurations.PurchaseModule
 {
-    public class BuyConfiguration : IEntityTypeConfiguration<Buy>
+    public class PurchaseRequestConfiguration : IEntityTypeConfiguration<PurchaseRequest>
     {
-        public void Configure(EntityTypeBuilder<Buy> builder)
+        public void Configure(EntityTypeBuilder<PurchaseRequest> builder)
         {
             //primarykey
             builder.HasKey(x => x.Id);
@@ -30,12 +30,12 @@ namespace CarStore.persistence.Data.Configurations.BuyModule
 
             //Finance
             builder.HasOne(x => x.Finance)
-                .WithOne(x => x.Buy)
-                .HasForeignKey<Finance>(x => x.BuyId);
+                .WithOne(x => x.PurchaseRequest)
+                .HasForeignKey<Finance>(x => x.PurchaseId);
 
             //DriverInfo
             //builder.HasOne(x => x.Driver)
-            //.WithMany(x => x.Buys)
+            //.WithMany(x => x.PurchaseRequests)
             //.HasForeignKey(x => x.DriverId);
 
             //Car
