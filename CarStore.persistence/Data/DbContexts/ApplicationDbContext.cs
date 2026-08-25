@@ -1,5 +1,6 @@
 ﻿using CarStore.Domain.Entities;
 using CarStore.Domain.Entities.CarModule;
+using CarStore.Domain.Entities.OrderModule.PurchaseModule;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -25,6 +26,8 @@ namespace CarStore.persistence.Data.DbContexts
         public DbSet<Category> Categories { get; set; }
         public DbSet<CarImage> CarImages { get; set; }
 
+        public DbSet<PurchaseRequest> Buys { get; set; }
+        public DbSet<Finance> Finances { get; set; }
 
     }
 }
