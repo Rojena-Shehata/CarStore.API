@@ -45,6 +45,7 @@ namespace CarStore.Services.Specifications.CarModule
             AddInclude(query => query.Include(c => c.Color));
             AddInclude(query => query.Include(c => c.Reviews));
             AddInclude(query => query.Include(c => c.Images));
+            AddInclude(query => query.Include(c => c.UserFavouriteCars));
             AddInclude(query => query.Include(c => c.CarFeatures).ThenInclude(cf=>cf.Feature));
             
         }

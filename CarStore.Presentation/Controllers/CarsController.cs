@@ -1,5 +1,6 @@
 ﻿using CarStore.ServicesAbstraction;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
+using CarStore.Shared.C_DTOs.CarModuleDtos.CommandsDTOs;
 using CarStore.Shared.C_DTOs.CarModuleDtos.Params;
 using CarStore.Shared.CommonResult;
 using Microsoft.AspNetCore.Authorization;
@@ -38,10 +39,29 @@ namespace CarStore.Presentation.Controllers
             return HandleResult(result);
         }
         [Authorize]
+        [HttpPut("{id}/Favourite")]
+        public async Task<ActionResult<Result>> AddCarToFavourites(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _carService.AddCarToFavouritesAsync(id,userId);
+            return HandleResult(result);
+        }
+        [Authorize]
+        [HttpPost("Reviews")]
+        public async Task<ActionResult<Result>> AddReviewForCar(AddReviewDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userName = User.FindFirstValue(ClaimTypes.Name);
+            //var result =  await _carService.AddCarReviewAsync(dto, userId,userName);
+            var result =  await _carService.AddCarReviewAsync(dto, userId);
+            return HandleResult(result);
+        }
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Result<CarWithDetailsDTO>>> GetCarById(int id)
         {
-            var result = await _carService.GetCarByIDAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _carService.GetCarByIDAsync(id, userId);
             return HandleResult(result);
         }
     }

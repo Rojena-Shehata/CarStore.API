@@ -230,20 +230,41 @@ namespace CarStore.persistence.Data.Migrations
 
             modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("ReviewerId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "CarId");
+                    b.Property<string>("ReviewerImageUrl")
+                        .HasMaxLength(2030)
+                        .HasColumnType("nvarchar(2030)");
+
+                    b.Property<string>("ReviewerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ReviewerId", "CarId");
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Review_Rating", "[Rating] >= 1 AND [Rating] <= 5");
+                        });
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.CarModule.Car", b =>

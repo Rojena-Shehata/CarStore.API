@@ -8,7 +8,7 @@
         public decimal? Price { get; set; }
         public string PriceLabel { get; set; } = default!;
         public string? Overview { get; set; } = default!;
-        public int? Year { get; set; }
+        public int Year { get; set; }
         public int SeatsNumber { get; set; }
         public int? MaxSpeed { get; set; }
 
@@ -18,6 +18,9 @@
         public EngineDTO Engine { get; set; } = default!;
 
         //Relationships
+        //Favourite
+        public bool IsFavourite { get; set; }
+
         //->> 1 Color 
         public ColorDTO Color { get; set; } = default!;
 
