@@ -9,7 +9,7 @@ namespace CarStore.Presentation.Controllers
     [Route("api/[Controller]")]
     public class ApiBaseController : ControllerBase
     {
-        protected IActionResult HandleResult(Result result)
+        protected ActionResult HandleResult(Result result)
         {
             if (result.IsSucceeded)
                 return Ok();
@@ -69,6 +69,7 @@ namespace CarStore.Presentation.Controllers
                 ErrorType.InvalidCredentials => StatusCodes.Status401Unauthorized,
                 ErrorType.Forbidden => StatusCodes.Status403Forbidden,
                 ErrorType.Failure => StatusCodes.Status500InternalServerError,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
 
             };
