@@ -54,9 +54,13 @@ namespace CarStore.persistence.Data.Configurations.OrderModule.RentModule
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 4 . DriverDetails
+            builder.HasOne(r => r.DriverDetails)
+                .WithMany(d => d.Reservations)
+                .HasForeignKey(r => r.DriverDetailsId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
 
     }
-    }
+    
 }

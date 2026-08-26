@@ -1,5 +1,6 @@
 ﻿using CarStore.Domain.Entities.CarModule;
 using CarStore.Domain.Entities.OrderModule.RentModule.Enum;
+using CarStore.Domain.Entities.OrderModule.SharedModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,10 @@ namespace CarStore.Domain.Entities.OrderModule.RentModule
     public RentalOffice? ReturnOffice { get; set; }
 
     public ICollection<RentalPayment> RentalPayments { get; set; } = new List<RentalPayment>();
-    //One Reservation may have MANY Rental payment Due to the status may be Pending , Cancelled , Paid
-    
+        //One Reservation may have MANY Rental payment Due to the status may be Pending , Cancelled , Paid
+
+        public int DriverDetailsId { get; set; }
+        public DriverDetails DriverDetails { get; set; } = null!;
+
     }
 }
