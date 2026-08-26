@@ -1,5 +1,6 @@
 ﻿using CarStore.Domain.Entities;
 using CarStore.Domain.Entities.CarModule;
+using CarStore.Domain.Entities.OrderModule.PurchaseModule;
 using CarStore.Domain.Entities.OrderModule.RentModule;
 using CarStore.Domain.Entities.OrderModule.SharedModule;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,11 @@ namespace CarStore.persistence.Data.DbContexts
         public DbSet<CarColor> Colors { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CarImage> CarImages { get; set; }
+
+        public DbSet<PurchaseRequest> Buys { get; set; }
+        public DbSet<Finance> Finances { get; set; }
+
         /*----------OrderSharedModule----------*/
         public DbSet<DriverDetails> DriverDetails { get; set; }
         /*----------Rentmodule-----------------*/

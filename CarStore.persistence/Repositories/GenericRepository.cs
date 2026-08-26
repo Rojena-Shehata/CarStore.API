@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarStore.persistence.Repositories
 {
-    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey>
-                                                            where TEntity : BaseEntity<TKey>
+    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class
+                                                            
     {
         private readonly DbSet<TEntity> _dbSet;
         public GenericRepository(DbContext context)
@@ -35,17 +35,27 @@ namespace CarStore.persistence.Repositories
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> specification)
         {
-            return await _dbSet.GetQuery<TEntity, TKey>(specification).ToListAsync();
+            return await _dbSet.GetQuery<TEntity>(specification).ToListAsync();
         }
 
         public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity> specification)
         {
-            return await _dbSet.GetQuery<TEntity, TKey>(specification).FirstOrDefaultAsync();
+            return await _dbSet.GetQuery<TEntity>(specification).FirstOrDefaultAsync();
         }
 
         public async Task<int> CountAsync(ISpecification<TEntity> specification)
         {
-            return await _dbSet.GetQuery<TEntity, TKey>(specification).CountAsync();
+            return await _dbSet.GetQuery<TEntity>(specification).CountAsync();
+        }
+
+        public IQueryable<TEntity> GetTable(ISpecification<TEntity> specification)
+        {
+            return _dbSet.GetQuery<TEntity>(specification);
+        }
+
+        public IQueryable<TEntity> GetTable()
+        {
+            return _dbSet;
         }
     }
 }

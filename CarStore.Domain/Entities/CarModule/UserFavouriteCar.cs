@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace CarStore.Domain.Entities.CarModule
 {
-    public class UserFavouriteCars
+    public class UserFavouriteCar
     {
-        public string UserId { get; set; } = default!;
+        public string UserId { get; set; }
         public int CarId { get; set; }
+        public Car Car { get; set; } = default!;
     }
 }

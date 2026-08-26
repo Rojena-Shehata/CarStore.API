@@ -12,14 +12,13 @@ namespace CarStore.Domain.Entities.CarModule
     public class Car:BaseEntity<int>
     {
         public string Name { get; set; } = default!;
-        public string ImageUrl { get; set; } = default!;
         public decimal? SalePrice { get; set; }
         public int? MaxSpeed { get; set; }
 
         public decimal? DailyRentPrice { get; set; }//per day
         public CarMode CarMode { get; set; }//sale or rent
-        public string? Description { get; set; }= default!;
-        public int? Year { get; set; }
+        public string? Overview { get; set; }
+        public int Year { get; set; }
         public int SeatsNumber { get; set; }
         public TransmissionType? TransmissionType { get; set; }
         public FuelType FuelType { get; set; }
@@ -28,6 +27,9 @@ namespace CarStore.Domain.Entities.CarModule
         public Engine Engine { get; set; } = default!;//Owned
 
         //Relationships
+        //many images to 1 car
+        public ICollection<CarImage> Images { get; set; } = [];
+
         //->> 1 Color To many Cars
         public int ColorId { get; set; }
         public CarColor Color { get; set; }
@@ -41,11 +43,13 @@ namespace CarStore.Domain.Entities.CarModule
         public Category Category { get; set; }
 
         //Features
-        public ICollection<CarFeature> CarFeatures { get; set; }
+        public ICollection<CarFeature> CarFeatures { get; set; } = [];
 
         //Reviews
-        public ICollection<Review> Reviews { get; set; }
+        public ICollection<Review> Reviews { get; set; } = [];
 
+        //UserFavouriteCar
+        public ICollection<UserFavouriteCar> UserFavouriteCars { get; set; } = [];
         ////UserFavouriteCar
         //public UserFavouriteCar UserFavouriteCar { get; set; }
         //public int UserFavouriteCarId { get; set; }

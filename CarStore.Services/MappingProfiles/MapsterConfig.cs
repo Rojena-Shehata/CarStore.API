@@ -15,6 +15,8 @@ namespace CarStore.Services.MapsterConfigurations
             ConfigureBrand();
             ConfigureEngine();
             ConfigureCar(configuration);
+
+            ConfigureImage(configuration);
             ConfigureFeature();
         }
         private static void ConfigureCar(IConfiguration configuration)
@@ -23,14 +25,21 @@ namespace CarStore.Services.MapsterConfigurations
                 .NewConfig()
                 .Map(dest => dest.Features,
          src => src.CarFeatures.Select(cf => cf.Feature))
-                .Map(dest=>dest.Drivetrain,
-                     src=>src.Drivetrain==Drivetrain.FourWD?"4WD":src.Drivetrain.ToString())
-                .Map(dest=>dest.ImageUrl,src=>src.ImageUrl.ToImageUrl(configuration));
+                .Map(dest => dest.Drivetrain,
+                     src => src.Drivetrain == Drivetrain.FourWD ? "4WD" : src.Drivetrain.ToString())
+                .Map(dest=>dest.ImageUrls,
+                     src=>src.Images.Select(image=>image.ImageUrl.ToImageUrl(configuration)));
 
         }
         private static void ConfigureEngine()
         {
             TypeAdapterConfig<Engine, EngineDTO>.NewConfig();
+        }
+        private static void ConfigureImage(IConfiguration configuration)
+        {
+            TypeAdapterConfig<CarImage, string>.NewConfig()
+                .Map(dest=>dest,src=>src.ImageUrl.ToImageUrl(configuration));
+            ;
         }
         private static void ConfigureBrand()
         {

@@ -11,9 +11,11 @@ namespace CarStore.Shared.C_DTOs.CarModuleDtos
         public int Id { get; set; }
 
         public string Name { get; set; } = default!;
-        public string ImageUrl { get; set; } = default!;
+        public string? ImageUrl { get; set; } 
         public decimal? Price { get; set; }
         public string PriceLabel { get; set; }
+        public double? Review { get; set; }
+        public bool IsFavourite { get; set; }
 
     }
 }
