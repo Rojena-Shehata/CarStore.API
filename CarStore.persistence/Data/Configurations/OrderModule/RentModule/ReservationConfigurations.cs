@@ -28,8 +28,8 @@ namespace CarStore.persistence.Data.Configurations.OrderModule.RentModule
             builder.Property(r => r.RentPrice)
                 .HasColumnType("decimal(18,2)");
 
-            /*  builder.Property(r => r.TaxAmount)
-                  .HasColumnType("decimal(18,2)");*/
+             builder.Property(r => r.TotalPrice)
+                  .HasColumnType("decimal(18,2)");
 
 
 

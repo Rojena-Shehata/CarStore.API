@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CarStore.Domain.Entities.OrderModule.RentModule
 {
-    public class Reservation : BaseEntity<int>
+    public class Reservation : BaseEntity<int> ,IAuditableEntity
     {
     public DateTime PickupDate { get; set; }
     public DateTime ReturnDate { get; set; }
@@ -32,10 +32,13 @@ namespace CarStore.Domain.Entities.OrderModule.RentModule
     public RentalOffice? ReturnOffice { get; set; }
 
     public ICollection<RentalPayment> RentalPayments { get; set; } = new List<RentalPayment>();
-        //One Reservation may have MANY Rental payment Due to the status may be Pending , Cancelled , Paid
+    //One Reservation may have MANY Rental payment Due to the status may be Pending , Cancelled , Paid
+    public int DriverDetailsId { get; set; }
+    public DriverDetails DriverDetails { get; set; } = null!;
+     /*----------- Audit Properties ---------------------*/
+     public DateTime? CreatedAt { get; set; }
+     public DateTime? UpdatedAt { get; set; }
 
-        public int DriverDetailsId { get; set; }
-        public DriverDetails DriverDetails { get; set; } = null!;
 
     }
 }

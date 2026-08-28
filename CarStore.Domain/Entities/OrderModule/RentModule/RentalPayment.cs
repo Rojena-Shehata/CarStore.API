@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CarStore.Domain.Entities.OrderModule.RentModule
 {
-    public class RentalPayment : BaseEntity<int>
+    public class RentalPayment : BaseEntity<int> , IAuditableEntity
     {
         public decimal Amount { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
@@ -18,6 +18,9 @@ namespace CarStore.Domain.Entities.OrderModule.RentModule
         /*-----------------Navigation-property------------*/
         public Reservation Reservation { get; set; } = null!;
         public int ReservationId { get; set; }
+        /*----------- Audit Properties ---------------------*/
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 
     
