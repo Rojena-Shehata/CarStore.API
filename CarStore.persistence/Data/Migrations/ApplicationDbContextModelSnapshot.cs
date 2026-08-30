@@ -228,6 +228,261 @@ namespace CarStore.persistence.Data.Migrations
                     b.ToTable("UserFavouriteCar");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.PurchaseModule.Finance", b =>
+                {
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DownPayment")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal>("EstimatedPayment")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal>("FlatRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("LoanTerm")
+                        .HasColumnType("int");
+
+                    b.HasKey("PurchaseId");
+
+                    b.ToTable("Finances");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.PurchaseModule.PurchaseRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DriveretailsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseRequestType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("ReferenceNumber")
+                        .IsUnique();
+
+                    b.ToTable("Buys");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.RentalOffice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RentalOffices", (string)null);
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.RentalPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("RentalPayments", (string)null);
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.Reservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BookingReference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DriverDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PickupDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PickupOfficeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QrToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RentPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RentnalDurationInDays")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ReturnOfficeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingReference")
+                        .IsUnique();
+
+                    b.HasIndex("CarId");
+
+                    b.HasIndex("DriverDetailsId");
+
+                    b.HasIndex("PickupOfficeId");
+
+                    b.HasIndex("ReturnOfficeId");
+
+                    b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.SharedModule.DriverDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DriversIdNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LicenseNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NationalId")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PrefereedContactTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DriverDetails", (string)null);
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
                 {
                     b.Property<string>("ReviewerId")
@@ -355,6 +610,115 @@ namespace CarStore.persistence.Data.Migrations
                     b.Navigation("Car");
                 });
 
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.PurchaseModule.Finance", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.OrderModule.PurchaseModule.PurchaseRequest", "PurchaseRequest")
+                        .WithOne("Finance")
+                        .HasForeignKey("CarStore.Domain.Entities.OrderModule.PurchaseModule.Finance", "PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PurchaseRequest");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.PurchaseModule.PurchaseRequest", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarStore.Domain.Entities.OrderModule.SharedModule.DriverDetails", "Driver")
+                        .WithMany("PurchaseRequests")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+
+                    b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.RentalPayment", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.OrderModule.RentModule.Reservation", "Reservation")
+                        .WithMany("RentalPayments")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.Reservation", b =>
+                {
+                    b.HasOne("CarStore.Domain.Entities.CarModule.Car", "Car")
+                        .WithMany("Reservations")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CarStore.Domain.Entities.OrderModule.SharedModule.DriverDetails", "DriverDetails")
+                        .WithMany("Reservations")
+                        .HasForeignKey("DriverDetailsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CarStore.Domain.Entities.OrderModule.RentModule.RentalOffice", "PickupOffice")
+                        .WithMany("PickupRentals")
+                        .HasForeignKey("PickupOfficeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CarStore.Domain.Entities.OrderModule.RentModule.RentalOffice", "ReturnOffice")
+                        .WithMany("ReturnRentals")
+                        .HasForeignKey("ReturnOfficeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Car");
+
+                    b.Navigation("DriverDetails");
+
+                    b.Navigation("PickupOffice");
+
+                    b.Navigation("ReturnOffice");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.SharedModule.DriverDetails", b =>
+                {
+                    b.OwnsOne("CarStore.Domain.Entities.OrderModule.SharedModule.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("DriverDetailsId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("City")
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("City");
+
+                            b1.Property<string>("StreetAddress")
+                                .HasMaxLength(150)
+                                .HasColumnType("nvarchar(150)")
+                                .HasColumnName("StreetAddress");
+
+                            b1.Property<string>("ZipCode")
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("ZipCode");
+
+                            b1.HasKey("DriverDetailsId");
+
+                            b1.ToTable("DriverDetails");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DriverDetailsId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CarStore.Domain.Entities.Review", b =>
                 {
                     b.HasOne("CarStore.Domain.Entities.CarModule.Car", null)
@@ -370,9 +734,35 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.Navigation("Images");
 
+                    b.Navigation("Reservations");
+
                     b.Navigation("Reviews");
 
                     b.Navigation("UserFavouriteCars");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.PurchaseModule.PurchaseRequest", b =>
+                {
+                    b.Navigation("Finance");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.RentalOffice", b =>
+                {
+                    b.Navigation("PickupRentals");
+
+                    b.Navigation("ReturnRentals");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.Reservation", b =>
+                {
+                    b.Navigation("RentalPayments");
+                });
+
+            modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.SharedModule.DriverDetails", b =>
+                {
+                    b.Navigation("PurchaseRequests");
+
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

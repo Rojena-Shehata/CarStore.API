@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CarStore.Domain.Entities.OrderModule.PurchaseModule.Enums;
+using CarStore.Domain.Entities.OrderModule.SharedModule;
 
 namespace CarStore.Domain.Entities.OrderModule.PurchaseModule
 {
@@ -19,8 +20,8 @@ namespace CarStore.Domain.Entities.OrderModule.PurchaseModule
         //Relationships
 
         // Many PurchaseRequests -> One DriverInfo
-        //public int DriverInfoId { get; set; }
-        //public DriverInfo Driver { get; set; } = default!;
+        public int DriveretailsId { get; set; }
+        public DriverDetails Driver { get; set; } = default!;
 
         // Many PurchaseRequests -> One Car
         public int CarId { get; set; }

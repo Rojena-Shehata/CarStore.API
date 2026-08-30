@@ -1,6 +1,8 @@
 ﻿using CarStore.Domain.Entities;
 using CarStore.Domain.Entities.CarModule;
 using CarStore.Domain.Entities.OrderModule.PurchaseModule;
+using CarStore.Domain.Entities.OrderModule.RentModule;
+using CarStore.Domain.Entities.OrderModule.SharedModule;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -17,6 +19,24 @@ namespace CarStore.persistence.Data.DbContexts
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+           public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<IAuditableEntity>();
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        } 
         public DbSet<Car> Cars { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Feature> Features { get; set; }
@@ -29,5 +49,11 @@ namespace CarStore.persistence.Data.DbContexts
         public DbSet<PurchaseRequest> Buys { get; set; }
         public DbSet<Finance> Finances { get; set; }
 
+        /*----------OrderSharedModule----------*/
+        public DbSet<DriverDetails> DriverDetails { get; set; }
+        /*----------Rentmodule-----------------*/
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<RentalOffice> RentalOffices { get; set; }
+        public DbSet<RentalPayment> RentalPayments { get; set; }
     }
 }

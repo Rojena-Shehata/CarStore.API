@@ -1,4 +1,5 @@
 ﻿using CarStore.Domain.Entities.CarModule.Enums;
+using CarStore.Domain.Entities.OrderModule.RentModule;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,5 +50,10 @@ namespace CarStore.Domain.Entities.CarModule
 
         //UserFavouriteCar
         public ICollection<UserFavouriteCar> UserFavouriteCars { get; set; } = [];
+        ////UserFavouriteCar
+        //public UserFavouriteCar UserFavouriteCar { get; set; }
+        //public int UserFavouriteCarId { get; set; }
+        /*--------------------Navigation-Properties--------------*/
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
