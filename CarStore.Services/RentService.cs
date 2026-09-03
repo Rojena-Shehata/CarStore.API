@@ -1,5 +1,6 @@
 ﻿using CarStore.Domain.Contracts;
 using CarStore.Domain.Entities.CarModule;
+using CarStore.Domain.Entities.CarModule.Enums;
 using CarStore.Services.Specifications.CarModule;
 using CarStore.ServicesAbstraction;
 using CarStore.Shared;
@@ -25,22 +26,30 @@ using System.Threading.Tasks;
         {
             var carDto = await _unitOfWork.GetRepository<Car , int>()
     .GetTable() 
-    .Where(c => c.Id == carId) 
-    .Select(c => new CarDetailsDto
-    {
-        Id = c.Id,
-        Name = c.Name,
-        ImageUrl = c.Images.Select(img => img.ImageUrl).FirstOrDefault(),
-        RentalPrice = c.DailyRentPrice,
-        TransmissionType = c.TransmissionType.ToString(), 
-        Brand = c.Brand.Name,            
-        DriveTrian= c.Drivetrain.ToString(),
-    })
-    .FirstOrDefaultAsync();
+    .Where(c => c.Id == carId)
+   .Select(c => new
+     {
+       Mode = c.CarMode, // Rent=2
+       Dto = new CarDetailsDto
+       {
+           Id = c.Id,
+           Name = c.Name,
+           ImageUrl = c.Images.Select(img => img.ImageUrl).FirstOrDefault(),
+           RentalPrice = c.DailyRentPrice,
+           TransmissionType = c.TransmissionType.ToString(),
+           Brand = c.Brand.Name,
+           DriveTrian = c.Drivetrain.ToString(),
+       }
+       })
+        .FirstOrDefaultAsync();
+
             if (carDto is null)
                 return Error.NotFound("Car.NotFound", $"Car with ID {carId} was not found.");
-
-            return carDto;
+            if (carDto.Mode == CarMode.Sale)
+                return Error.Validation("Car.NotForRent", "This car is for sale and not available for rent.");
+            if (carDto is null)
+                return Error.NotFound("Car.NotFound", $"Car with ID {carId} was not found.");
+            return carDto.Dto;
         }
 
     }
