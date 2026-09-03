@@ -34,9 +34,7 @@ using System.Threading.Tasks;
         RentalPrice = c.DailyRentPrice,
         TransmissionType = c.TransmissionType.ToString(), 
         Brand = c.Brand.Name,            
-        CategoryName = c.Category.Name   
-
-
+        DriveTrian= c.Drivetrain.ToString(),
     })
     .FirstOrDefaultAsync();
             if (carDto is null)

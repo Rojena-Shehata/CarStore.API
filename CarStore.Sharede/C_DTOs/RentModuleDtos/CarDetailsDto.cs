@@ -15,5 +15,6 @@ namespace CarStore.Shared
         public string TransmissionType { get; set; } = default!;
         public string? Brand { get; set; }
         public string? CategoryName { get; set; } 
+        public string? DriveTrian { get; set; }
     }
 }
