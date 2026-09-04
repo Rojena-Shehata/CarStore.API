@@ -30,6 +30,15 @@ namespace CarStore.Presentation.Controllers
             var result = await _rentService.GetCarByIDAsync(id, userId);
             return HandleResult(result);
         }
+        /*-----------------------------------------------------------------*/
+        [Authorize]
+        [HttpGet("{CarId}/unavailable-dates")]
+        public async Task<ActionResult<Result<List<DateTime>>>> GetUnavailableDates(int CarId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _rentService.GetCarUnavailableDatesAsync(CarId ,userId);
+            return HandleResult(result);
+        }
 
     }
 }
