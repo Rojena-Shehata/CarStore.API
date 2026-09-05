@@ -20,7 +20,17 @@ namespace CarStore.Presentation.Controllers
         protected ActionResult HandleResult<TValue>(Result<TValue> result)
         {
             if (result.IsSucceeded)
+            {
+                if (!string.IsNullOrWhiteSpace(result.SuccessMessage))
+                {
+                    return Ok(new
+                    {
+                        message = result.SuccessMessage,
+                        data = result.Value
+                    });
+                }
                 return Ok(result.Value);
+            }
             else
                 return HandleErrors(result.Errors);
         }

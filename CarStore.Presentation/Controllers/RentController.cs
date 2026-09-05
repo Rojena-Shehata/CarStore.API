@@ -1,4 +1,5 @@
 ﻿using CarStore.ServicesAbstraction;
+using CarStore.Shared;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
 using CarStore.Shared.CommonResult;
 using Microsoft.AspNetCore.Authorization;
@@ -39,6 +40,14 @@ namespace CarStore.Presentation.Controllers
             var result = await _rentService.GetCarUnavailableDatesAsync(CarId ,userId);
             return HandleResult(result);
         }
-
+        /*-------------------------------------------------------------------*/
+        [Authorize]
+        [HttpGet("offices")]
+        public async Task<ActionResult<Result<List<RentalOfficeReadDto>>>> GetRentalOffices()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _rentService.GetActiveRentalOfficesAsync(userId);
+            return HandleResult(result);
+        }
     }
 }

@@ -13,5 +13,7 @@ namespace CarStore.ServicesAbstraction
     {
         Task<Result<CarDetailsDto>> GetCarByIDAsync(int carId, string userId);
         Task<Result<List<DateTime>>> GetCarUnavailableDatesAsync(int carId, string userId);
+        Task<Result<List<RentalOfficeReadDto>>> GetActiveRentalOfficesAsync(string userId);
+
     }
 }

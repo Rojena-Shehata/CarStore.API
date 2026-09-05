@@ -11,6 +11,10 @@
             _value = value;
 
         }
+        private Result(TValue value , string message) : base(message)
+        {
+            _value = value;
+        }
         private Result(Error error) : base(error)
         {
             _value = default!;
@@ -22,6 +26,8 @@
 
         //Methods Factory
         public static Result<TValue> Ok(TValue value) => new Result<TValue>(value);
+        public static Result<TValue> Ok(TValue value , string message) => new Result<TValue>(value , message);
+
         public new static Result<TValue> Fail(Error error) => new Result<TValue>(error);
         public new static Result<TValue> Fail(List<Error> errors) => new Result<TValue>(errors);
 

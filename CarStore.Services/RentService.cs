@@ -7,6 +7,7 @@ using CarStore.Services.Specifications.RentModule;
 using CarStore.ServicesAbstraction;
 using CarStore.Shared;
 using CarStore.Shared.CommonResult;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -84,10 +85,25 @@ using System.Threading.Tasks;
                 }
             }
 
-            return unavailableDates.OrderBy(d => d).ToList();
-
+            var unavailabledateResult = unavailableDates.OrderBy(d => d).ToList();
+            return Result<List<DateTime>>.Ok(unavailabledateResult, "Unavailable dates retrieved successfully.");
         }
+        /*-----------------------------------------------------------------------------------------*/
+        public async Task<Result<List<RentalOfficeReadDto>>> GetActiveRentalOfficesAsync(string userId)
+        {
+            var offices = await _unitOfWork.GetRepository<RentalOffice, int>()
+                .GetTable()
+                .Where(o => o.IsActive)
+                .Select(o => new RentalOfficeReadDto
+                {
+                    Id = o.Id,
+                    Name = o.Name,
+                    Address = o.Address
+                })
+                .ToListAsync();
 
+            return offices;
+        }
 
     }
 }
