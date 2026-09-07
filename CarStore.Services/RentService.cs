@@ -104,8 +104,13 @@ using System.Threading.Tasks;
             return offices;
         }
         /*-----------------------------------------------------------------------------------------*/
-        public async Task<Result> CreateRentalDate(string userId , CreateDateDto createDateDto)
+        public async Task<Result<RentalPriceDto>> CreateRentalDate(string userId , CreateDateDto createDateDto)
         {
+            // 1. Validate dates
+            // 2. Get car
+            // 3. Make sure car is available for rent
+            // 4. Calculate rental days
+            // 5. Calculate price
 
         }
 
