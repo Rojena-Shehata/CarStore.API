@@ -101,8 +101,12 @@ using System.Threading.Tasks;
                     Address = o.Address
                 })
                 .ToListAsync();
-
             return offices;
+        }
+        /*-----------------------------------------------------------------------------------------*/
+        public async Task<Result> CreateRentalDate(string userId , CreateDateDto createDateDto)
+        {
+
         }
 
     }
