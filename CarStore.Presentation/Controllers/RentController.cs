@@ -24,11 +24,11 @@ namespace CarStore.Presentation.Controllers
         }
         /*-----------------------------------------------------------------*/
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Result<CarWithDetailsDTO>>> GetCarById(int id)
+        [HttpGet("RentCarById{CarId}")]
+        public async Task<ActionResult<Result<CarWithDetailsDTO>>> GetCarById(int CarId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _rentService.GetCarByIDAsync(id, userId);
+            var result = await _rentService.GetCarByIDAsync(CarId, userId);
             return HandleResult(result);
         }
         /*-----------------------------------------------------------------*/
@@ -37,7 +37,7 @@ namespace CarStore.Presentation.Controllers
         public async Task<ActionResult<Result<List<DateTime>>>> GetUnavailableDates(int CarId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _rentService.GetCarUnavailableDatesAsync(CarId ,userId);
+            var result = await _rentService.GetCarUnavailableDatesAsync(CarId, userId);
             return HandleResult(result);
         }
         /*-------------------------------------------------------------------*/
@@ -49,5 +49,15 @@ namespace CarStore.Presentation.Controllers
             var result = await _rentService.GetActiveRentalOfficesAsync(userId);
             return HandleResult(result);
         }
-    }
+        /*---------------------------------------------------------------*/
+        [Authorize]
+        [HttpPost("Calculate-RentPrice")]
+        public async Task<ActionResult<Result<RentalPriceDto>>> CreateRentalDate(CreateDateDto createDateDto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _rentService.CreateRentalDate(userId , createDateDto);
+            return HandleResult(result);
+        }
+    } 
+    
 }

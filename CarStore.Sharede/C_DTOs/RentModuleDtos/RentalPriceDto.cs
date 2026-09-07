@@ -8,9 +8,9 @@ namespace CarStore.Shared
 {
     public class RentalPriceDto
     {
+        public int CarId { get; set; }
         public int RentalDays { get; set; }
         public decimal DailyPrice { get; set; }
-        public decimal RentalPrice { get; set; }
-        public decimal Total { get; set; }
+        public decimal TotalPrice { get; set; }
     }
 }

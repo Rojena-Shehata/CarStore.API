@@ -7,6 +7,7 @@ using CarStore.Services.Specifications.RentModule;
 using CarStore.ServicesAbstraction;
 using CarStore.Shared;
 using CarStore.Shared.CommonResult;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,10 +20,12 @@ using System.Threading.Tasks;
     public class RentService :IRentService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IValidator<CreateDateDto> _validator;
 
-        public RentService(IUnitOfWork unitOfWork)
+        public RentService(IValidator<CreateDateDto> validator ,IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _validator = validator;
         }
         /*-------------------------------------------------------------------------*/
         public async Task<Result<CarDetailsDto>> GetCarByIDAsync(int carId, string userId)
@@ -107,11 +110,62 @@ using System.Threading.Tasks;
         public async Task<Result<RentalPriceDto>> CreateRentalDate(string userId , CreateDateDto createDateDto)
         {
             // 1. Validate dates
-            // 2. Get car
-            // 3. Make sure car is available for rent
-            // 4. Calculate rental days
-            // 5. Calculate price
+            var validationResult = await _validator.ValidateAsync(createDateDto);
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                    .Select(e => Error.Validation(e.PropertyName, e.ErrorMessage))
+                    .ToList();
 
+                return Result<RentalPriceDto>.Fail(errors);
+            }
+            //2. Fetch Car
+            var car = await _unitOfWork.GetRepository<Car, int>()
+                .GetTable()
+                .FirstOrDefaultAsync(c => c.Id == createDateDto.CarId && c.CarMode == CarMode.Rent);
+
+            if (car is null)
+            {
+                return Error.NotFound("Car.NotFound", $"Car with ID {createDateDto.CarId} was not found or is not available for rent.");
+            }
+
+            // 3. Check if Offices exist
+            var pickupOfficeExists = await _unitOfWork.GetRepository<RentalOffice, int>()
+                .GetTable()
+                .AnyAsync(o => o.Id == createDateDto.PickupOfficeId && o.IsActive);
+
+            if (!pickupOfficeExists)
+            {
+                return Error.NotFound("Office.NotFound", $"Pickup office with ID {createDateDto.PickupOfficeId} is invalid or inactive.");
+            }
+
+            var returnOfficeExists = await _unitOfWork.GetRepository<RentalOffice, int>()
+                .GetTable()
+                .AnyAsync(o => o.Id == createDateDto.ReturnOfficeId && o.IsActive);
+
+            if (!returnOfficeExists)
+            {
+                return Error.NotFound("Office.NotFound", $"Return office with ID {createDateDto.ReturnOfficeId} is invalid or inactive.");
+            }
+
+            // 4. Calculate Duration & Pricing using DailyRentPrice
+            var totalDays = (createDateDto.ReturnDate.Date - createDateDto.PickUpDate.Date).Days;
+            if (totalDays <= 0) totalDays = 1;
+
+            var dailyPrice = car.DailyRentPrice ?? 0m;
+            var rentalTotal = totalDays * dailyPrice;
+          
+
+            // 5. Map to DTO
+            var resultDto = new RentalPriceDto
+            {
+                CarId = car.Id,
+                RentalDays = totalDays,
+                DailyPrice = dailyPrice,
+                TotalPrice = rentalTotal,
+            };
+
+            return Result<RentalPriceDto>.Ok(resultDto);
         }
 
     }
