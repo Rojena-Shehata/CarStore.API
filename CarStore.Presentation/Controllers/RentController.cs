@@ -52,10 +52,10 @@ namespace CarStore.Presentation.Controllers
         /*---------------------------------------------------------------*/
         [Authorize]
         [HttpPost("Calculate-RentPrice")]
-        public async Task<ActionResult<Result<RentalPriceDto>>> CreateRentalDate(CreateDateDto createDateDto)
+        public async Task<ActionResult<Result<RentalPriceDto>>> SelectRentalDate(CreateDateDto createDateDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _rentService.CreateRentalDate(userId , createDateDto);
+            var result = await _rentService.SelectRentalDate(userId , createDateDto);
             return HandleResult(result);
         }
     } 

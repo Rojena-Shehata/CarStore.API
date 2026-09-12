@@ -107,7 +107,7 @@ using System.Threading.Tasks;
             return offices;
         }
         /*-----------------------------------------------------------------------------------------*/
-        public async Task<Result<RentalPriceDto>> CreateRentalDate(string userId , CreateDateDto createDateDto)
+        public async Task<Result<RentalPriceDto>> SelectRentalDate(string userId , CreateDateDto createDateDto)
         {
             // 1. Validate dates
             var validationResult = await _validator.ValidateAsync(createDateDto);
