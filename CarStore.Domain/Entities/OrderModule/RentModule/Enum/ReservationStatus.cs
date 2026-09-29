@@ -8,8 +8,8 @@ namespace CarStore.Domain.Entities.OrderModule.RentModule.Enum
 {
     public enum ReservationStatus
     {
-       Cancelled,
-       Completed,
+       Cancelled,  
+       Completed,  
        Active
     }
 }
