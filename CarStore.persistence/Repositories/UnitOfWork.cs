@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CarStore.persistence.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork 
     {
         private readonly ApplicationDbContext _context;
         private readonly Dictionary<string, object> _repositories = [];
@@ -20,7 +20,7 @@ namespace CarStore.persistence.Repositories
             _context = context;
         }
 
-        public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseEntity<TKey>
+        public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class
         {
             //KeyOfDictionary = "TEntity+TKey" =>"Brand+int"
             var KeyOfDictionary =$" {typeof(TEntity).Name}+{typeof(TKey).Name}";

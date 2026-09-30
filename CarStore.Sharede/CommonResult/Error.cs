@@ -26,6 +26,8 @@
                     => new Error(code, description, ErrorType.Forbidden);
         public static Error InvalidCredentials(string code = "Error.InvalidCredentials", string description = "Invalid Credentials Provided")
                     => new Error(code, description, ErrorType.InvalidCredentials);
+        public static Error Conflict(string code = "Error.Conflict", string description = "A Conflict Occurred")
+                    => new Error(code, description, ErrorType.Conflict);
 
     }
 }

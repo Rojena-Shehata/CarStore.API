@@ -21,7 +21,7 @@ namespace CarStore.persistence.Data.Configurations.CarModule
                 .Property(c => c.Name)
                 .HasMaxLength(200);
             carEntityBuilder
-                .Property(c => c.Description)
+                .Property(c => c.Overview)
                 .HasMaxLength(500);
 
             carEntityBuilder

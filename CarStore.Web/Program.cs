@@ -8,6 +8,7 @@ using CarStore.Web.Extentions;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
+using CarStore.Services.Extensions;
 
 namespace CarStore.Web
 {
@@ -26,7 +27,7 @@ namespace CarStore.Web
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerServices();
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices(builder.Configuration);
@@ -52,6 +53,7 @@ namespace CarStore.Web
 
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

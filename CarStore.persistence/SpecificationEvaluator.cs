@@ -12,7 +12,7 @@ namespace CarStore.persistence
 {
     internal static class SpecificationEvaluator
     {
-        public static IQueryable<TEntity> GetQuery<TEntity,TKey>(this IQueryable<TEntity> inputQuery,ISpecification<TEntity> spec) where TEntity : BaseEntity<TKey>
+        public static IQueryable<TEntity> GetQuery<TEntity>(this IQueryable<TEntity> inputQuery,ISpecification<TEntity> spec) where TEntity : class
         {
             var query = inputQuery;
             if(spec is not null)
