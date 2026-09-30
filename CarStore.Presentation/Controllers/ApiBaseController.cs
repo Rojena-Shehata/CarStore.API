@@ -1,4 +1,5 @@
-﻿using CarStore.Shared.CommonResult;
+﻿
+using CarStore.Shared.CommonResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,67 +14,89 @@ namespace CarStore.Presentation.Controllers
         {
             if (result.IsSucceeded)
                 return Ok();
-            else
-                return HandleErrors(result.Errors);
 
+            return HandleErrors(result.Errors);
         }
+
         protected ActionResult HandleResult<TValue>(Result<TValue> result)
         {
             if (result.IsSucceeded)
                 return Ok(result.Value);
-            else
-                return HandleErrors(result.Errors);
+
+            return HandleErrors(result.Errors);
         }
+
         private ActionResult HandleErrors(IReadOnlyList<Error> errors)
         {
-
-
             if (errors.Count == 0)
-                return Problem(statusCode: StatusCodes.Status500InternalServerError, title: "An UnExpected Error Occurred");
-            else if (errors.All(error => error.Type == ErrorType.Validation))
-                return HandleValidatioErrors(errors);
-            else
-                return HandleSingleError(errors[0]);
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "An Unexpected Error Occurred"
+                );
+            }
 
+            if (errors.All(error => error.Type == ErrorType.Validation))
+                return HandleValidationErrors(errors);
+
+            return HandleSingleError(errors[0]);
         }
 
-        private ActionResult HandleValidatioErrors(IReadOnlyList<Error> errors)
+        private ActionResult HandleValidationErrors(
+            IReadOnlyList<Error> errors)
         {
             var modelState = new ModelStateDictionary();
+
             foreach (var error in errors)
             {
-                modelState.AddModelError(error.Code, error.Description);
+                modelState.AddModelError(
+                    error.Code,
+                    error.Description
+                );
             }
+
             return ValidationProblem(modelState);
         }
+
         private ActionResult HandleSingleError(Error error)
         {
-            return Problem
-                (
-                    title: error.Code,
-                    type: error.Type.ToString(),
-                    detail: error.Description,
-                    instance: Request.Path,
-                    statusCode: GetStatusCodeByErrorType(error.Type)
-                );
+            return Problem(
+                title: error.Code,
+                type: error.Type.ToString(),
+                detail: error.Description,
+                instance: Request.Path,
+                statusCode: GetStatusCodeByErrorType(error.Type)
+            );
         }
 
-
-        private int GetStatusCodeByErrorType(ErrorType errorType)
+        private static int GetStatusCodeByErrorType(ErrorType errorType)
         {
             return errorType switch
             {
-                ErrorType.Validation => StatusCodes.Status400BadRequest,
-                ErrorType.NotFound => StatusCodes.Status404NotFound,
-                ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
-                ErrorType.InvalidCredentials => StatusCodes.Status401Unauthorized,
-                ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-                ErrorType.Failure => StatusCodes.Status500InternalServerError,
-                ErrorType.Conflict => StatusCodes.Status409Conflict,
-                _ => StatusCodes.Status500InternalServerError
+                ErrorType.Validation =>
+                    StatusCodes.Status400BadRequest,
 
+                ErrorType.NotFound =>
+                    StatusCodes.Status404NotFound,
+
+                ErrorType.Unauthorized =>
+                    StatusCodes.Status401Unauthorized,
+
+                ErrorType.InvalidCredentials =>
+                    StatusCodes.Status401Unauthorized,
+
+                ErrorType.Forbidden =>
+                    StatusCodes.Status403Forbidden,
+
+                ErrorType.Failure =>
+                    StatusCodes.Status500InternalServerError,
+
+                ErrorType.Conflict =>
+                    StatusCodes.Status409Conflict,
+
+                _ =>
+                    StatusCodes.Status500InternalServerError
             };
         }
-
     }
 }

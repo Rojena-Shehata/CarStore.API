@@ -264,9 +264,6 @@ namespace CarStore.persistence.Data.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DriverId")
-                        .HasColumnType("int");
-
                     b.Property<int>("DriveretailsId")
                         .HasColumnType("int");
 
@@ -286,12 +283,12 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.HasIndex("DriverId");
+                    b.HasIndex("DriveretailsId");
 
                     b.HasIndex("ReferenceNumber")
                         .IsUnique();
 
-                    b.ToTable("Buys");
+                    b.ToTable("PurchaseRequests");
                 });
 
             modelBuilder.Entity("CarStore.Domain.Entities.OrderModule.RentModule.RentalOffice", b =>
@@ -631,7 +628,7 @@ namespace CarStore.persistence.Data.Migrations
 
                     b.HasOne("CarStore.Domain.Entities.OrderModule.SharedModule.DriverDetails", "Driver")
                         .WithMany("PurchaseRequests")
-                        .HasForeignKey("DriverId")
+                        .HasForeignKey("DriveretailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -1,3 +1,4 @@
+
 using CarStore.Domain.Contracts;
 using CarStore.Domain.ExceptionHandling;
 using CarStore.persistence.Data.DataSeed;
@@ -9,6 +10,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 using CarStore.Services.Extensions;
+using QuestPDF.Infrastructure;
 
 namespace CarStore.Web
 {
@@ -18,14 +20,17 @@ namespace CarStore.Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Configure QuestPDF License
+            QuestPDF.Settings.License = LicenseType.Community;
+
             // Add services to the container.
 
             builder.Services.AddControllers();
-            //mapster
+
+            // Mapster
             builder.Services.AddMapster();
 
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Learn more about Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerServices();
 
@@ -34,13 +39,13 @@ namespace CarStore.Web
             builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
             builder.Services.AddKeyedScoped<IDataInitializer, DataInitializer>("NotIdentity");
 
-
             var app = builder.Build();
 
             await app.MigrateIdentityDataAsync();
             await app.MigrateDataAsync();
             await app.SeedIdentityDataAsync();
             await app.SeedDataAsync();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -55,7 +60,6 @@ namespace CarStore.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
