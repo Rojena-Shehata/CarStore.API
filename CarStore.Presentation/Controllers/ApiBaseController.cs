@@ -30,10 +30,15 @@ namespace CarStore.Presentation.Controllers
                         data = result.Value
                     });
                 }
+
                 return Ok(result.Value);
+            }
             else
+            {
                 return HandleErrors(result.Errors);
+            }
         }
+
 
         private ActionResult HandleErrors(IReadOnlyList<Error> errors)
         {

@@ -62,10 +62,11 @@ namespace CarStore.Services.Services
             }
 
             // Validate down payment
+            // Validate down payment
             if (financeCalculationDTO.DownPayment <= 0 ||
                 financeCalculationDTO.DownPayment >= car.SalePrice.Value)
             {
-                return Error.Failure(
+                return Error.Validation(
                     "Finance.InvalidDownPayment",
                     "Down payment must be greater than zero and less than the car price.");
             }

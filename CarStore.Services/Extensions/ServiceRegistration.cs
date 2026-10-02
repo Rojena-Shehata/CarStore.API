@@ -21,6 +21,8 @@ namespace CarStore.Services.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ICarService, CarService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
+            services.AddScoped<IFinanceService, FinanceService>();
 
             services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
