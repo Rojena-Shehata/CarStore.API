@@ -18,7 +18,7 @@ namespace CarStore.Presentation.Controllers
 
         [Authorize]
         [HttpPost("calculate")]
-        public async Task<ActionResult<Result<FinanceCalculationResponseDTO>>> CalculateFinance(
+        public async Task<ActionResult> CalculateFinance(
             FinanceCalculationDTO financeCalculationDTO)
         {
             var result = await _financeService.CalculateFinanceAsync(

@@ -36,7 +36,7 @@ namespace CarStore.persistence.Data.Configurations.PurchaseModule
             //DriverInfo
             builder.HasOne(x => x.Driver)
             .WithMany(x => x.PurchaseRequests)
-            .HasForeignKey(x => x.DriveretailsId);
+            .HasForeignKey(x => x.DriverDetailsId);
 
             //Car
             builder.HasOne(x => x.Car)

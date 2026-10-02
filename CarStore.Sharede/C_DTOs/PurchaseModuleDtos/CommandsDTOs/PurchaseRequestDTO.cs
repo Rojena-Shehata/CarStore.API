@@ -1,9 +1,4 @@
 ﻿using CarStore.Domain.Entities.OrderModule.PurchaseModule.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarStore.Shared.C_DTOs.PurchaseModuleDtos.CommandsDTOs
 {
@@ -21,6 +16,7 @@ namespace CarStore.Shared.C_DTOs.PurchaseModuleDtos.CommandsDTOs
 
         public string City { get; set; } = default!;
         public string ZipCode { get; set; } = default!;
+
         public DateTime PreferredContactTime { get; set; }
 
         public decimal? DownPayment { get; set; }

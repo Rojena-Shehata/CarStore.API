@@ -39,6 +39,9 @@ namespace CarStore.Web
             builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
             builder.Services.AddKeyedScoped<IDataInitializer, DataInitializer>("NotIdentity");
 
+            builder.Services.AddScoped<PurchaseConfirmationPdfService>();
+
+
             var app = builder.Build();
 
             await app.MigrateIdentityDataAsync();

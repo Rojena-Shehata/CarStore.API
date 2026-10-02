@@ -20,7 +20,7 @@ namespace CarStore.Domain.Entities.OrderModule.PurchaseModule
         //Relationships
 
         // Many PurchaseRequests -> One DriverInfo
-        public int DriveretailsId { get; set; }
+        public int DriverDetailsId { get; set; }
         public DriverDetails Driver { get; set; } = default!;
 
         // Many PurchaseRequests -> One Car

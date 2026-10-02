@@ -1,5 +1,4 @@
-﻿
-using CarStore.Domain.Contracts;
+﻿using CarStore.Domain.Contracts;
 using CarStore.Domain.Entities.CarModule;
 using CarStore.Domain.Entities.CarModule.Enums;
 using CarStore.Domain.Entities.OrderModule.PurchaseModule;
@@ -76,7 +75,7 @@ namespace CarStore.Services
                     "The car does not have a valid sale price.");
             }
 
-            // Validate finance data before creating entities
+            // Validate finance data
             if (purchaseRequestDTO.PurchaseType ==
                 PurchaseRequestType.Finance)
             {

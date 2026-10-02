@@ -13,6 +13,7 @@ namespace CarStore.ServicesAbstraction
         Task<Result<PurchaseConfirmationDTO>> GetPurchaseConfirmationAsync(
             int purchaseId);
 
-        Task<Result<byte[]>> DownloadPurchaseConfirmationAsync(int purchaseId);
+        Task<Result<byte[]>> DownloadPurchaseConfirmationAsync(
+            int purchaseId);
     }
 }
