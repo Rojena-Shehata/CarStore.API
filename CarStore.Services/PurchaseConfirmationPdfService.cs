@@ -1,5 +1,4 @@
-﻿
-using CarStore.Shared.C_DTOs.PurchaseModuleDtos.QueriesDTOs;
+﻿using CarStore.Shared.C_DTOs.PurchaseModuleDtos.QueriesDTOs;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -21,7 +20,7 @@ namespace CarStore.Services
 
                     // Header
                     page.Header()
-                        .Background(Colors.Blue.Darken2)
+                        .Background("#551711")
                         .Padding(20)
                         .Column(column =>
                         {
@@ -48,7 +47,8 @@ namespace CarStore.Services
                             column.Item()
                                 .Text($"Confirmation No: {confirmation.ReferenceNumber}")
                                 .FontSize(16)
-                                .Bold();
+                                .Bold()
+                                .FontColor("#551711");
 
                             column.Item()
                                 .Text($"Purchase Method: {confirmation.PurchaseMethod}");
@@ -58,11 +58,11 @@ namespace CarStore.Services
                                 .Text("VEHICLE DETAILS")
                                 .FontSize(18)
                                 .Bold()
-                                .FontColor(Colors.Blue.Darken2);
+                                .FontColor("#551711");
 
                             column.Item()
                                 .Border(1)
-                                .BorderColor(Colors.Grey.Lighten2)
+                                .BorderColor("#EAA81B")
                                 .Padding(15)
                                 .Column(vehicle =>
                                 {
@@ -71,7 +71,8 @@ namespace CarStore.Services
                                     vehicle.Item()
                                         .Text(confirmation.SelectedVehicle.Name)
                                         .FontSize(16)
-                                        .Bold();
+                                        .Bold()
+                                        .FontColor("#551711");
 
                                     vehicle.Item()
                                         .Text($"Year: {confirmation.SelectedVehicle.Year}");
@@ -85,11 +86,11 @@ namespace CarStore.Services
                                 .Text("PAYMENT DETAILS")
                                 .FontSize(18)
                                 .Bold()
-                                .FontColor(Colors.Blue.Darken2);
+                                .FontColor("#551711");
 
                             column.Item()
                                 .Border(1)
-                                .BorderColor(Colors.Grey.Lighten2)
+                                .BorderColor("#EAA81B")
                                 .Padding(15)
                                 .Column(payment =>
                                 {
@@ -108,13 +109,15 @@ namespace CarStore.Services
 
                                         payment.Item()
                                             .Text($"Estimated Monthly Payment: {confirmation.FinanceDetails.EstimatedPayment:N2}")
-                                            .Bold();
+                                            .Bold()
+                                            .FontColor("#551711");
                                     }
                                     else
                                     {
                                         payment.Item()
                                             .Text("Payment Type: Full Cash Payment")
-                                            .Bold();
+                                            .Bold()
+                                            .FontColor("#551711");
                                     }
                                 });
 
@@ -125,7 +128,7 @@ namespace CarStore.Services
                                 .Text("Thank you for choosing Car's Wroom!")
                                 .FontSize(15)
                                 .Bold()
-                                .FontColor(Colors.Blue.Darken2);
+                                .FontColor("#551711");
                         });
 
                     // Footer
@@ -133,7 +136,7 @@ namespace CarStore.Services
                         .AlignCenter()
                         .Text("Car's Wroom | Purchase Confirmation")
                         .FontSize(9)
-                        .FontColor(Colors.Grey.Darken1);
+                        .FontColor("#551711");
                 });
             });
 
