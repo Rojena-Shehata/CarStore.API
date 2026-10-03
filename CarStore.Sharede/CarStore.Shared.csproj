@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CarStore.Domain\CarStore.Domain.csproj" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="QuestPDF" Version="2026.9.1" />
   </ItemGroup>
 
 </Project>

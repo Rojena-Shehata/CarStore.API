@@ -46,7 +46,7 @@ namespace CarStore.persistence.Data.DbContexts
         public DbSet<Category> Categories { get; set; }
         public DbSet<CarImage> CarImages { get; set; }
 
-        public DbSet<PurchaseRequest> Buys { get; set; }
+        public DbSet<PurchaseRequest> PurchaseRequests { get; set; }
         public DbSet<Finance> Finances { get; set; }
 
         /*----------OrderSharedModule----------*/
