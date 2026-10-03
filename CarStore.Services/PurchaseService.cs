@@ -133,7 +133,10 @@ namespace CarStore.Services
                 Car = car,
                 Driver = driver,
                 PurchaseRequestType = purchaseRequestDTO.PurchaseType,
-                TotalPrice = car.SalePrice.Value
+                TotalPrice = car.SalePrice.Value,
+
+                // Generate reference number
+                ReferenceNumber = $"PUR-{GenerateReferenceCode()}"
             };
 
             var purchaseRepository =
@@ -180,16 +183,6 @@ namespace CarStore.Services
                 purchaseRequest.Finance = finance;
             }
 
-            // Temporary reference number before first save
-            purchaseRequest.ReferenceNumber =
-                $"TEMP-{Guid.NewGuid():N}";
-
-            await _unitOfWork.SaveChangesAsync();
-
-            // Generate final reference number after obtaining the ID
-            purchaseRequest.ReferenceNumber =
-                $"PUR-{DateTime.Now.Year}-{purchaseRequest.Id:D5}";
-
             await _unitOfWork.SaveChangesAsync();
 
             return new PurchaseResponseDTO
@@ -197,6 +190,17 @@ namespace CarStore.Services
                 PurchaseId = purchaseRequest.Id,
                 ReferenceNumber = purchaseRequest.ReferenceNumber
             };
+        }
+
+        private static string GenerateReferenceCode()
+        {
+            const string chars =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+            return string.Concat(
+                Enumerable.Range(0, 7)
+                    .Select(_ =>
+                        chars[Random.Shared.Next(chars.Length)]));
         }
 
         public async Task<Result<PurchaseConfirmationDTO>>
