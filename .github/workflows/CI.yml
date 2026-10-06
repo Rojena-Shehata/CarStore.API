@@ -1,0 +1,59 @@
+# Name shown for this workflow in GitHub Actions
+name: .NET CI
+
+# Define when the workflow should run
+on:
+
+  # Run CI whenever a Pull Request targets the dev branch
+  # This helps catch build/test errors before merging into dev
+  pull_request:
+    branches:
+      - dev
+      - main
+
+  # Run CI whenever code is pushed directly to dev or master
+  push:
+    branches:
+      - dev
+      - main
+
+# Define the jobs that GitHub Actions will execute
+jobs:
+
+  # Job responsible for checking that the application
+  # can be restored, compiled, and tested successfully
+  build-and-test:
+
+    # Use a fresh Ubuntu virtual machine provided by GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Download/checkout the repository code into the runner
+      # Without this, the runner wouldn't have our project files
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install the .NET SDK needed to build the project
+      # 10.0.x means: use the latest available patch version
+      # within the .NET 10.0 release
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Download all NuGet packages required by the solution
+      # The GitHub runner starts with a clean environment
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Compile the application and check for compilation errors
+      # --no-restore prevents restoring packages again
+      # --configuration Release builds using Release configuration
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      # Run the automated tests
+      # --no-build prevents building the project again
+      - name: Run tests
+        run: dotnet test --no-build --configuration Release
