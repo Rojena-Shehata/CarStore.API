@@ -6,6 +6,7 @@ using CarStore.Services.Specifications.CarModule;
 using CarStore.Services.Specifications.RentModule;
 using CarStore.ServicesAbstraction;
 using CarStore.Shared;
+using CarStore.Shared.C_DTOs;
 using CarStore.Shared.CommonResult;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -167,6 +168,11 @@ using System.Threading.Tasks;
 
             return Result<RentalPriceDto>.Ok(resultDto);
         }
+        /*------------------------------------------------------------------------------------*/
+       /* public async Task<Result<ReservationPaymentDto>> CreateReservation(string userId, CreateReservationDto createReservationDto)
+        {
+
+        }*/
 
     }
 }

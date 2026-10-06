@@ -1,5 +1,5 @@
 ﻿using CarStore.Shared;
-
+using CarStore.Shared.C_DTOs;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
 using CarStore.Shared.CommonResult;
 using System;
@@ -15,6 +15,7 @@ namespace CarStore.ServicesAbstraction
         Task<Result<List<DateTime>>> GetCarUnavailableDatesAsync(int carId, string userId);
         Task<Result<List<RentalOfficeReadDto>>> GetActiveRentalOfficesAsync(string userId);
         Task<Result<RentalPriceDto>> SelectRentalDate(string userId, CreateDateDto createDateDto);
+        //Task<Result<ReservationPaymentDto>> CreateReservation(string userId, CreateReservationDto createReservationDto);
 
 
     }
