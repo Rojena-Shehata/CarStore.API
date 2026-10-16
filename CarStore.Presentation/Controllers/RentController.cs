@@ -1,5 +1,6 @@
 ﻿using CarStore.ServicesAbstraction;
 using CarStore.Shared;
+using CarStore.Shared.C_DTOs;
 using CarStore.Shared.C_DTOs.CarModuleDtos;
 using CarStore.Shared.CommonResult;
 using Microsoft.AspNetCore.Authorization;
@@ -56,6 +57,15 @@ namespace CarStore.Presentation.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _rentService.SelectRentalDate(userId , createDateDto);
+            return HandleResult(result);
+        }
+        /*------------------------------------------------------------*/
+        [Authorize]
+        [HttpPost ("Create-Reservation")]
+        public async Task<ActionResult<Result<ReservationPaymentDto>>> CreateReservation([FromBody] CreateReservationDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _rentService.CreateReservation(userId, dto);
             return HandleResult(result);
         }
     } 

@@ -15,7 +15,7 @@ namespace CarStore.ServicesAbstraction
         Task<Result<List<DateTime>>> GetCarUnavailableDatesAsync(int carId, string userId);
         Task<Result<List<RentalOfficeReadDto>>> GetActiveRentalOfficesAsync(string userId);
         Task<Result<RentalPriceDto>> SelectRentalDate(string userId, CreateDateDto createDateDto);
-        Task<Result<ReservationPaymentDto>> CreateReservation(string userId, CreateReservationResponseDto createReservationDto);
+        Task<Result<ReservationPaymentDto>> CreateReservation(string userId, CreateReservationDto createReservationDto);
 
 
     }
