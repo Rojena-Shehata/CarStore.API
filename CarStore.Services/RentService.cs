@@ -2,6 +2,8 @@
 using CarStore.Domain.Entities.CarModule;
 using CarStore.Domain.Entities.CarModule.Enums;
 using CarStore.Domain.Entities.OrderModule.RentModule;
+using CarStore.Domain.Entities.OrderModule.RentModule.Enum;
+using CarStore.Domain.Entities.OrderModule.SharedModule;
 using CarStore.Services.Specifications.CarModule;
 using CarStore.Services.Specifications.RentModule;
 using CarStore.ServicesAbstraction;
@@ -20,13 +22,20 @@ using System.Threading.Tasks;
 {
     public class RentService :IRentService
     {
+        // fields
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IValidator<CreateDateDto> _validator;
+        private readonly IValidator<CreateDateDto> _dateValidator;
+        private readonly IValidator<CreateReservationDto> _reservationValidator;
 
-        public RentService(IValidator<CreateDateDto> validator ,IUnitOfWork unitOfWork)
+        // constructor
+        public RentService(
+            IValidator<CreateDateDto> dateValidator,
+            IValidator<CreateReservationDto> reservationValidator,
+            IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _validator = validator;
+            _dateValidator = dateValidator;
+            _reservationValidator = reservationValidator;
         }
         /*-------------------------------------------------------------------------*/
         public async Task<Result<CarDetailsDto>> GetCarByIDAsync(int carId, string userId)
@@ -111,7 +120,7 @@ using System.Threading.Tasks;
         public async Task<Result<RentalPriceDto>> SelectRentalDate(string userId , CreateDateDto createDateDto)
         {
             // 1. Validate dates
-            var validationResult = await _validator.ValidateAsync(createDateDto);
+            var validationResult = await _dateValidator.ValidateAsync(createDateDto);
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors
@@ -169,10 +178,155 @@ using System.Threading.Tasks;
             return Result<RentalPriceDto>.Ok(resultDto);
         }
         /*------------------------------------------------------------------------------------*/
-       /* public async Task<Result<ReservationPaymentDto>> CreateReservation(string userId, CreateReservationDto createReservationDto)
+        public async Task<Result<ReservationPaymentDto>> CreateReservation(string userId, CreateReservationDto createReservationDto)
         {
+            // 1. Validate request
+            var validationResult = await _reservationValidator
+                .ValidateAsync(createReservationDto);
 
-        }*/
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                    .Select(e => Error.Validation(
+                        e.PropertyName,
+                        e.ErrorMessage))
+                    .ToList();
 
+                return Result<ReservationPaymentDto>.Fail(errors);
+            }
+            // 2. Fetch car
+            var car = await _unitOfWork
+                .GetRepository<Car, int>()
+                .GetTable()
+                .FirstOrDefaultAsync(c =>c.Id == createReservationDto.CarId && c.CarMode == CarMode.Rent);
+
+            if (car is null)
+            {
+                return Error.NotFound(
+                    "Car.NotFound",
+                    $"Car with ID {createReservationDto.CarId} was not found or is not available for rent.");
+            }
+            // 3. Validate pickup office
+            var pickupOfficeExists = await _unitOfWork
+                .GetRepository<RentalOffice, int>()
+                .GetTable()
+                .AnyAsync(o =>
+                    o.Id == createReservationDto.PickupOfficeId &&
+                    o.IsActive);
+
+            if (!pickupOfficeExists)
+            {
+                return Error.NotFound(
+                    "Office.NotFound",
+                    "Pickup office is invalid or inactive.");
+            }
+
+
+            // 4. Validate return office
+            var returnOfficeExists = await _unitOfWork
+                .GetRepository<RentalOffice, int>()
+                .GetTable()
+                .AnyAsync(o =>
+                    o.Id == createReservationDto.ReturnOfficeId &&
+                    o.IsActive);
+
+            if (!returnOfficeExists)
+            {
+                return Error.NotFound(
+                    "Office.NotFound",
+                    "Return office is invalid or inactive.");
+            }
+          
+
+            // 5. Check car availability AGAIN
+            var hasConflict = await _unitOfWork
+                .GetRepository<Reservation, int>()
+                .GetTable()
+                .AnyAsync(r =>
+                    r.CarId == createReservationDto.CarId &&
+                    r.Status != ReservationStatus.Cancelled &&
+                    createReservationDto.PickupDate < r.ReturnDate &&
+                    createReservationDto.ReturnDate > r.PickupDate);
+
+            if (hasConflict)
+            {
+                return Error.Validation(
+                    "Car.NotAvailable",
+                    "The car is no longer available for the selected dates.");
+            }
+
+
+            // 6. Calculate rental days AGAIN
+            var rentalDays =
+                (createReservationDto.ReturnDate.Date -
+                 createReservationDto.PickupDate.Date).Days;
+
+            if (rentalDays <= 0)
+            {
+                rentalDays = 1;
+            }
+
+
+            // 7. Calculate price AGAIN
+            var dailyPrice = car.DailyRentPrice ?? 0m;
+
+            var totalPrice = rentalDays * dailyPrice;
+
+
+            // 8. Create Reservation
+            var reservation = new Reservation
+            {
+                UserId = userId,
+                CarId = car.Id,
+                PickupDate = createReservationDto.PickupDate,
+                ReturnDate = createReservationDto.ReturnDate,
+                PickupOfficeId = createReservationDto.PickupOfficeId,
+                ReturnOfficeId = createReservationDto.ReturnOfficeId,
+                RentPrice = totalPrice,
+                Status = ReservationStatus.Pending,
+                BookingReference = GenerateBookingReference(),
+                // Driver information
+                DriverDetails = new DriverDetails
+                {
+                    FirstName = createReservationDto.DriverInfo!.FirstName,
+                    LastName = createReservationDto.DriverInfo.LastName,
+                    NationalId = createReservationDto.DriverInfo.NationalId,
+                    Email = createReservationDto.DriverInfo.Email,
+                    PhoneNumber = createReservationDto.DriverInfo.PhoneNumber,
+
+                    Address = new Address
+                    {
+                        StreetAddress = createReservationDto.DriverInfo.StreetAddress,
+                        City = createReservationDto.DriverInfo.City,
+                        ZipCode = createReservationDto.DriverInfo.ZipCode
+                    },
+
+                    DriversIdNumber = createReservationDto.DriverInfo.DriverIdNumber
+                }
+            };
+
+
+            // 9. Save Reservation
+             _unitOfWork
+                .GetRepository<Reservation, int>()
+                .Add(reservation);
+
+            await _unitOfWork.SaveChangesAsync();
+
+
+            return new ReservationPaymentDto
+            {
+                ReservationId = reservation.Id,
+                BookingReference = reservation.BookingReference,
+                RentalDays = rentalDays,
+                DailyPrice = dailyPrice,
+                TotalPrice = totalPrice,
+            };
+        }
+        /*-----------------Helpers--------------------*/
+        private string GenerateBookingReference()
+        {
+            return $"CAR-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+        }
     }
 }

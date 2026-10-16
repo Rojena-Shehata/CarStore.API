@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarStore.Domain.Entities.OrderModule.RentModule.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,11 @@ namespace CarStore.Shared.C_DTOs
     public class ReservationPaymentDto
     {
         public int CarId { get; set; }
-        public DateTime PickupDate { get; set; }
-        public DateTime ReturnDate { get; set; }
-        public int PickupOfficeId { get; set; }
-        public int ReturnOfficeId { get; set; }
-        public DriverInfoDto ?DriverInfo { get; set; } 
+        public int ReservationId { get; set; }
+        public int RentalDays { get; set; }
+        public decimal DailyPrice { get; set; }
+        public decimal TotalPrice { get; set; }
+        public ReservationStatus Status { get; set; }
+        public string BookingReference { get; set; } = string.Empty;
     }
 }

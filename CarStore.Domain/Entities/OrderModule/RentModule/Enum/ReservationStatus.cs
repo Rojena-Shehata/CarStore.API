@@ -8,6 +8,7 @@ namespace CarStore.Domain.Entities.OrderModule.RentModule.Enum
 {
     public enum ReservationStatus
     {
+        Pending,
        Cancelled,  
        Completed,  
        Active
