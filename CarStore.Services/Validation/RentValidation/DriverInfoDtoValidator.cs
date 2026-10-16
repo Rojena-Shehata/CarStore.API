@@ -75,4 +75,5 @@ namespace CarStore.Services
                     .WithMessage("Driver's license number cannot exceed 50 characters.");
             }
         }
+    }
 }
