@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Stripe;
 
 namespace CarStore.persistence.Extensions
 {
@@ -54,6 +55,16 @@ namespace CarStore.persistence.Extensions
             {
                 options.TokenLifespan = TimeSpan.FromMinutes(10);
             });
+
+            var stripeSecretKey = configuration["Stripe:SecretKey"];
+
+            if (string.IsNullOrWhiteSpace(stripeSecretKey))
+            {
+                throw new InvalidOperationException(
+                    "Stripe secret key is not configured.");
+            }
+
+            StripeConfiguration.ApiKey = stripeSecretKey;
         }
     }
 }
