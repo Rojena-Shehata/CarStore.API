@@ -321,6 +321,8 @@ using System.Threading.Tasks;
                 RentalDays = rentalDays,
                 DailyPrice = dailyPrice,
                 TotalPrice = totalPrice,
+                CarId=car.Id,
+                Status=ReservationStatus.Pending
             };
         }
         /*-----------------Helpers--------------------*/
