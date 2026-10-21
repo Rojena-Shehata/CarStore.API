@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using System.Text;
 
 namespace CarStore.Services.Extensions
@@ -64,7 +65,15 @@ namespace CarStore.Services.Extensions
 
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssembly(typeof(ServiceRegistration).Assembly);
+            var stripeSecretKey = configuration["Stripe:SecretKey"];
 
+            if (string.IsNullOrWhiteSpace(stripeSecretKey))
+            {
+                throw new InvalidOperationException(
+                    "Stripe secret key is not configured.");
+            }
+
+            StripeConfiguration.ApiKey = stripeSecretKey;
 
             //mapster
             MapsterConfig.Configure(configuration);
