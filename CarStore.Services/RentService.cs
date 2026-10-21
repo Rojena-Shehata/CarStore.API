@@ -301,7 +301,7 @@ using System.Threading.Tasks;
                         ZipCode = createReservationDto.DriverInfo.ZipCode
                     },
 
-                    DriversIdNumber = createReservationDto.DriverInfo.DriverIdNumber
+                   // DriversIdNumber = createReservationDto.DriverInfo.DriverIdNumber
                 }
             };
 
