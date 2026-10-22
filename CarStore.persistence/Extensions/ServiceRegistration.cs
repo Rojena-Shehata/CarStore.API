@@ -4,6 +4,8 @@ using CarStore.Domain.Entities.IdentityModule;
 using CarStore.persistence.Data.DbContexts;
 using CarStore.persistence.IdentityData.Data.DbContexts;
 using CarStore.persistence.Repositories;
+using CarStore.Services.Services;
+using CarStore.ServicesAbstraction;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +67,7 @@ namespace CarStore.persistence.Extensions
             }
 
             StripeConfiguration.ApiKey = stripeSecretKey;
+            services.AddScoped<IStripePaymentService, StripePaymentService>();
         }
     }
 }
