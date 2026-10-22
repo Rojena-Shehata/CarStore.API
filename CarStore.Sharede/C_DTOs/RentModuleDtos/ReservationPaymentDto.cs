@@ -16,5 +16,6 @@ namespace CarStore.Shared.C_DTOs
         public decimal TotalPrice { get; set; }
         public ReservationStatus Status { get; set; }
         public string BookingReference { get; set; } = string.Empty;
+        public string ClientSecret { get; set; } = string.Empty;
     }
 }

@@ -13,6 +13,7 @@ using CarStore.Shared.CommonResult;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,16 +27,19 @@ using System.Threading.Tasks;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<CreateDateDto> _dateValidator;
         private readonly IValidator<CreateReservationDto> _reservationValidator;
+        private readonly IStripePaymentService _stripePaymentService;
 
         // constructor
         public RentService(
             IValidator<CreateDateDto> dateValidator,
             IValidator<CreateReservationDto> reservationValidator,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IStripePaymentService stripePaymentService)
         {
             _unitOfWork = unitOfWork;
             _dateValidator = dateValidator;
             _reservationValidator = reservationValidator;
+            _stripePaymentService = stripePaymentService;
         }
         /*-------------------------------------------------------------------------*/
         public async Task<Result<CarDetailsDto>> GetCarByIDAsync(int carId, string userId)
@@ -294,7 +298,7 @@ using System.Threading.Tasks;
                     Email = createReservationDto.DriverInfo.Email,
                     PhoneNumber = createReservationDto.DriverInfo.PhoneNumber,
 
-                    Address = new Address
+                    Address = new CarStore.Domain.Entities.OrderModule.SharedModule.Address
                     {
                         StreetAddress = createReservationDto.DriverInfo.StreetAddress,
                         City = createReservationDto.DriverInfo.City,
@@ -304,16 +308,37 @@ using System.Threading.Tasks;
                    // DriversIdNumber = createReservationDto.DriverInfo.DriverIdNumber
                 }
             };
-
-
-            // 9. Save Reservation
-             _unitOfWork
+            // 9. Save Reservation first
+            _unitOfWork
                 .GetRepository<Reservation, int>()
                 .Add(reservation);
 
             await _unitOfWork.SaveChangesAsync();
 
+            // 10. Create Stripe PaymentIntent
+            var paymentIntent =
+                await _stripePaymentService.CreatePaymentIntentAsync(
+                    totalPrice,
+                    reservation.Id
+                );
 
+            // 11. Create RentalPayment record
+            var rentalPayment = new RentalPayment
+            {
+                Amount = totalPrice,
+                PaymentStatus = PaymentStatus.Pending,
+                StripePaymentIntentId = paymentIntent.Id,
+                UserId = userId,
+                ReservationId = reservation.Id
+            };
+
+            _unitOfWork
+                .GetRepository<RentalPayment, int>()
+                .Add(rentalPayment);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            // 12. Return reservation and payment details
             return new ReservationPaymentDto
             {
                 ReservationId = reservation.Id,
@@ -321,8 +346,9 @@ using System.Threading.Tasks;
                 RentalDays = rentalDays,
                 DailyPrice = dailyPrice,
                 TotalPrice = totalPrice,
-                CarId=car.Id,
-                Status=ReservationStatus.Pending
+                CarId = car.Id,
+                Status = ReservationStatus.Pending,
+                ClientSecret = paymentIntent.ClientSecret
             };
         }
         /*-----------------Helpers--------------------*/
