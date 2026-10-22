@@ -4,11 +4,12 @@ using CarStore.persistence.Data.DataSeed;
 using CarStore.persistence.Extensions;
 using CarStore.persistence.IdentityData.Data.DataSeed;
 using CarStore.Services;
+using CarStore.Services.Extensions;
 using CarStore.Web.Extentions;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
-using CarStore.Services.Extensions;
+using System.Text.Json.Serialization;
 
 namespace CarStore.Web
 {
@@ -20,7 +21,15 @@ namespace CarStore.Web
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            // builder.Services.AddControllers();
+            builder.Services
+     .AddControllers()
+     .AddJsonOptions(options =>
+     {
+         options.JsonSerializerOptions.Converters.Add(
+             new JsonStringEnumConverter()
+         );
+     });
             //mapster
             builder.Services.AddMapster();
 
